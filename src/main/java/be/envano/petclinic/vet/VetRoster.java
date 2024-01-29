@@ -1,27 +1,27 @@
 package be.envano.petclinic.vet;
 
-import static java.lang.System.*;
+import static java.lang.System.Logger;
 import static java.lang.System.Logger.*;
 
 import java.util.Objects;
 
 import be.envano.petclinic.specialty.Specialty;
 
-public class Roster {
+public class VetRoster {
 
-	private static final Logger LOGGER = getLogger(Roster.class.getName());
+	private static final Logger LOGGER = System.getLogger(VetRoster.class.getName());
 
 	private final VetRepository repository;
-	private final VetEventPublisher publisher;
 	private final VetIdSequencer idSequencer;
+	private final VetEventPublisher eventPublisher;
 
-	public Roster(VetRepository repository, VetEventPublisher publisher, VetIdSequencer idSequencer) {
-		Objects.requireNonNull(publisher, "vet publisher missing");
-		Objects.requireNonNull(repository, "vet repository missing");
+	public VetRoster(VetRepository repository, VetEventPublisher eventPublisher, VetIdSequencer idSequencer) {
+		Objects.requireNonNull(eventPublisher, "vet event published missing");
 		Objects.requireNonNull(idSequencer, "vet id sequencer missing");
+		Objects.requireNonNull(repository, "vet repository missing");
 		this.idSequencer = idSequencer;
 		this.repository = repository;
-		this.publisher = publisher;
+		this.eventPublisher = eventPublisher;
 	}
 
 	public Vet recruit(Vet.Recruit command) {
@@ -33,7 +33,7 @@ public class Roster {
 		final Vet.Id id = idSequencer.nextId();
 		return Vet.recruit(id, command)
 			.then(repository::save)
-			.then(publisher::recruited);
+			.then(eventPublisher::recruited);
 	}
 
 	public Vet resign(Vet.Resign command) {
@@ -45,7 +45,7 @@ public class Roster {
 		final Vet.Id id = command.id();
 		return repository.findById(id).orElseThrow(Vet.NotFound::new)
 			.then(repository::delete)
-			.then(publisher::resigned);
+			.then(eventPublisher::resigned);
 	}
 
 	public Vet specialize(Vet.Specialize command) {
@@ -59,10 +59,10 @@ public class Roster {
 		return repository.findById(id).orElseThrow(Vet.NotFound::new)
 			.then(vet -> vet.specialize(specialtyId))
 			.then(repository::save)
-			.then(publisher::specialized);
+			.then(vet -> eventPublisher.specialized(vet, specialtyId));
 	}
 
-	public Vet removeSpecialty(Vet.RemoteSpecialty command) {
+	public Vet removeSpecialty(Vet.RemoveSpecialty command) {
 		Objects.requireNonNull(command, "vet command missing");
 
 		LOGGER.log(Level.DEBUG, "A vets specialty is to be removed");
@@ -73,7 +73,7 @@ public class Roster {
 		return repository.findById(id).orElseThrow(Vet.NotFound::new)
 			.then(vet -> vet.removeSpecialty(specialtyId))
 			.then(repository::save)
-			.then(publisher::specialized);
+			.then(vet -> eventPublisher.specialtyRemoved(vet, specialtyId));
 	}
 
 	public Vet correctName(Vet.CorrectName command) {
@@ -87,7 +87,7 @@ public class Roster {
 		return repository.findById(id).orElseThrow(Vet.NotFound::new)
 			.then(vet -> vet.correctName(name))
 			.then(repository::save)
-			.then(publisher::specialized);
+			.then(eventPublisher::nameCorrected);
 	}
 
 }
