@@ -30,8 +30,6 @@ public class Specialty {
     Specialty rename(SpecialtyCommand.Rename command) {
         Objects.requireNonNull(command);
 
-        if (this.id != command.id())
-            throw new IllegalStateException("specialty ids do not match");
         if (this.version != command.version())
             throw new IllegalStateException("specialty versions do not match");
 
