@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -15,12 +16,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 class SpecialtyCatalogTest {
 
     private final SpecialtyRepository repository = new SpecialtyTestRepository();
-    private final SpecialityIdSequencer idSequencer = new SpecialtyTestIdSequencer();
     private final SpecialtyTestEventPublisher eventPublisher = new SpecialtyTestEventPublisher();
 
     private final SpecialtyCatalog catalog = new SpecialtyCatalog(
         repository,
-        idSequencer,
         eventPublisher
     );
 
@@ -86,13 +85,21 @@ class SpecialtyCatalogTest {
 
     private static class SpecialtyTestRepository implements SpecialtyRepository {
 
+        private final AtomicLong idSequence = new AtomicLong();
+        private final AtomicInteger versionSequence = new AtomicInteger();
+
         private final List<Specialty> specialties = new ArrayList<>();
 
         @Override
         public Specialty save(Specialty specialty) {
             Objects.requireNonNull(specialty);
             this.specialties.add(specialty);
-            return specialty;
+            SpecialtyCommand.Load command = new SpecialtyCommand.Load(
+                idSequence.incrementAndGet(),
+                specialty.name(),
+                versionSequence.incrementAndGet()
+            );
+            return Specialty.load(command);
         }
 
         @Override
@@ -100,17 +107,6 @@ class SpecialtyCatalogTest {
             return this.specialties.stream()
                 .filter(specialty -> specialty.id() == id)
                 .findFirst();
-        }
-
-    }
-
-    private static class SpecialtyTestIdSequencer implements SpecialityIdSequencer {
-
-        private final AtomicLong sequencer = new AtomicLong(0);
-
-        @Override
-        public long nextId() {
-            return sequencer.incrementAndGet();
         }
 
     }

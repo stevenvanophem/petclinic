@@ -10,16 +10,13 @@ public class SpecialtyCatalog {
     private static final Logger LOGGER = getLogger(SpecialtyCatalog.class.getName());
 
     private final SpecialtyRepository repository;
-    private final SpecialityIdSequencer idSequencer;
     private final SpecialtyEventPublisher eventPublisher;
 
     public SpecialtyCatalog(
         SpecialtyRepository repository,
-        SpecialityIdSequencer idSequencer,
         SpecialtyEventPublisher eventPublisher
     ) {
         this.eventPublisher = eventPublisher;
-        this.idSequencer = idSequencer;
         this.repository = repository;
     }
 
@@ -29,10 +26,9 @@ public class SpecialtyCatalog {
         LOGGER.log(Level.DEBUG, "Registering specialty");
         LOGGER.log(Level.TRACE, command.toString());
 
-        final long id = idSequencer.nextId();
-        return new Specialty(command, id)
-            .map(repository::save)
-            .tap(eventPublisher::registered);
+        return new Specialty(command)
+            .andThen(repository::save)
+            .doWith(eventPublisher::registered);
     }
 
     public Specialty rename(SpecialtyCommand.Rename command) {
@@ -42,9 +38,9 @@ public class SpecialtyCatalog {
         LOGGER.log(Level.TRACE, command.toString());
 
         return repository.findById(command.id()).orElseThrow()
-            .map(specialty -> specialty.rename(command))
-            .map(repository::save)
-            .tap(eventPublisher::renamed);
+            .andThen(specialty -> specialty.rename(command))
+            .andThen(repository::save)
+            .doWith(eventPublisher::renamed);
     }
 
 }

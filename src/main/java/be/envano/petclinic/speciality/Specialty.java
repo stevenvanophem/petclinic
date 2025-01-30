@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 public class Specialty {
 
-    private final long id;
+    private long id;
     private Name name;
     private int version;
 
@@ -21,9 +21,8 @@ public class Specialty {
         this.version = command.version();
     }
 
-    Specialty(SpecialtyCommand.Register command, long id) {
+    Specialty(SpecialtyCommand.Register command) {
         Objects.requireNonNull(command);
-        this.id = id;
         this.name = command.name();
     }
 
@@ -37,11 +36,11 @@ public class Specialty {
         return this;
     }
 
-    public <T> T map(Function<Specialty, T> function) {
+    public <T> T andThen(Function<Specialty, T> function) {
         return function.apply(this);
     }
 
-    public Specialty tap(Consumer<Specialty> action) {
+    public Specialty doWith(Consumer<Specialty> action) {
         action.accept(this);
         return this;
     }
