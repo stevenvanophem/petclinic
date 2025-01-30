@@ -2,11 +2,9 @@ package be.envano.petclinic.speciality.persistence;
 
 import be.envano.petclinic.speciality.Specialty;
 import be.envano.petclinic.speciality.SpecialtyRepository;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Component
 public class SpecialityStorage implements SpecialtyRepository {
 
     private final SpecialityJpaRepository repository;
