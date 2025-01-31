@@ -1,4 +1,4 @@
-package be.envano.petclinic.speciality.bean;
+package be.envano.petclinic.speciality.di;
 
 import be.envano.petclinic.speciality.SpecialtyCatalog;
 import be.envano.petclinic.speciality.persistence.SpecialityJpaRepository;
