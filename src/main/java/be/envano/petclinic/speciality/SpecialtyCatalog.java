@@ -28,7 +28,7 @@ public class SpecialtyCatalog {
 
         return new Specialty(command)
             .andThen(repository::save)
-            .doWith(eventPublisher::registered);
+            .peek(eventPublisher::registered);
     }
 
     public Specialty rename(SpecialtyCommand.Rename command) {
@@ -40,7 +40,7 @@ public class SpecialtyCatalog {
         return repository.findById(command.id()).orElseThrow()
             .andThen(specialty -> specialty.rename(command))
             .andThen(repository::save)
-            .doWith(eventPublisher::renamed);
+            .peek(eventPublisher::renamed);
     }
 
 }

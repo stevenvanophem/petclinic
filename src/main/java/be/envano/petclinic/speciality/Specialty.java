@@ -40,7 +40,7 @@ public class Specialty {
         return function.apply(this);
     }
 
-    public Specialty doWith(Consumer<Specialty> action) {
+    public Specialty peek(Consumer<Specialty> action) {
         action.accept(this);
         return this;
     }
