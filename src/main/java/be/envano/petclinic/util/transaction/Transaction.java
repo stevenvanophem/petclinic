@@ -1,4 +1,4 @@
-package be.envano.petclinic;
+package be.envano.petclinic.util.transaction;
 
 import java.util.function.Supplier;
 

@@ -1,7 +1,8 @@
 package be.envano.petclinic.speciality;
 
-import be.envano.petclinic.Transaction;
+import be.envano.petclinic.util.transaction.Transaction;
 
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.System.Logger;
@@ -51,6 +52,10 @@ public class SpecialtyCatalog {
             specialty.events().forEach(eventPublisher::publish);
             return repository.save(specialty);
         });
+    }
+
+    public List<Specialty> findAll() {
+        return repository.findAll();
     }
 
 }

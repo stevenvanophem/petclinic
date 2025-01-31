@@ -3,6 +3,7 @@ package be.envano.petclinic.speciality.rest;
 import be.envano.petclinic.speciality.Specialty;
 import be.envano.petclinic.speciality.SpecialtyCatalog;
 import be.envano.petclinic.speciality.SpecialtyCommand;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -41,6 +43,13 @@ class SpecialtyController {
         SpecialtyCommand.Rename command = CommandFactory.create(request, id);
         Specialty specialty = catalog.rename(command);
         return ResponseFactory.create(specialty);
+    }
+
+    @GetMapping
+    List<RestModel.Response> findAll() {
+        return catalog.findAll().stream()
+            .map(ResponseFactory::create)
+            .toList();
     }
 
 }

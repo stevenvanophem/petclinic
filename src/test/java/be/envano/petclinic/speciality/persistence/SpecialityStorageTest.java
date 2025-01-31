@@ -1,8 +1,7 @@
 package be.envano.petclinic.speciality.persistence;
 
 import be.envano.petclinic.speciality.Specialty;
-import be.envano.petclinic.speciality.SpecialtyCommand;
-import be.envano.petclinic.speciality.SpecialtyTestFactory;
+import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +22,9 @@ class SpecialityStorageTest {
     @Test
     @DisplayName("I can store a specialty")
     void testStore() {
-        final SpecialtyCommand.Load surgery = SpecialtyTestFactory.Surgery.loadCommand();
+        final Specialty surgery = SpecialtyTestFactory.Surgery.load();
 
-        Specialty result = storage.save(Specialty.load(surgery));
+        Specialty result = storage.save(surgery);
 
         assertThat(result).isNotNull();
         assertThat(result.id()).isEqualTo(SpecialtyTestFactory.Surgery.ID);
@@ -36,8 +35,8 @@ class SpecialityStorageTest {
     @Test
     @DisplayName("I can find a specialty by id")
     void testFindById() {
-        final SpecialtyCommand.Load surgery = SpecialtyTestFactory.Surgery.loadCommand();
-        final Specialty specialty = storage.save(Specialty.load(surgery));
+        final Specialty surgery = SpecialtyTestFactory.Surgery.load();
+        final Specialty specialty = storage.save(surgery);
 
         Optional<Specialty> result = storage.findById(specialty.id());
 

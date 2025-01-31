@@ -1,4 +1,7 @@
-package be.envano.petclinic.speciality;
+package be.envano.petclinic.speciality.support;
+
+import be.envano.petclinic.speciality.Specialty;
+import be.envano.petclinic.speciality.SpecialtyCommand;
 
 public class SpecialtyTestFactory {
 
@@ -11,8 +14,8 @@ public class SpecialtyTestFactory {
         public static final int VERSION = 0;
         public static final Specialty.Name NAME = new Specialty.Name("radiology");
 
-        public static SpecialtyCommand.Load loadCommand() {
-            return new SpecialtyCommand.Load(ID, NAME, VERSION);
+        public static Specialty load() {
+            return Specialty.load(new SpecialtyCommand.Load(ID, NAME, VERSION));
         }
 
     }
@@ -23,8 +26,8 @@ public class SpecialtyTestFactory {
         public static final int VERSION = 0;
         public static final Specialty.Name NAME = new Specialty.Name("surgery");
 
-        public static SpecialtyCommand.Load loadCommand() {
-            return new SpecialtyCommand.Load(ID, NAME, VERSION);
+        public static Specialty load() {
+            return Specialty.load(new SpecialtyCommand.Load(ID, NAME, VERSION));
         }
 
     }
@@ -35,8 +38,8 @@ public class SpecialtyTestFactory {
         public static final int VERSION = 0;
         public static final Specialty.Name NAME = new Specialty.Name("dentistry");
 
-        public static SpecialtyCommand.Load loadCommand() {
-            return new SpecialtyCommand.Load(ID, NAME, VERSION);
+        public static Specialty load() {
+            return Specialty.load(new SpecialtyCommand.Load(ID, NAME, VERSION));
         }
 
     }

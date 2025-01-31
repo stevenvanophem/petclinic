@@ -1,14 +1,13 @@
 package be.envano.petclinic.speciality;
 
+import be.envano.petclinic.speciality.support.SpecialtyTestEventPublisher;
+import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
+import be.envano.petclinic.speciality.support.SpecialtyTestRepository;
+import be.envano.petclinic.util.transaction.TestTransaction;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -36,7 +35,7 @@ class SpecialtyCatalogTest {
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.name()).isEqualTo(SpecialtyTestFactory.Surgery.NAME);
         assertThat(transaction.count()).isEqualTo(1);
-        assertThat(eventPublisher.events.getFirst())
+        assertThat(eventPublisher.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
             .isEqualTo(SpecialtyEvent.Registered.class.getSimpleName());
     }
@@ -46,7 +45,7 @@ class SpecialtyCatalogTest {
     void testRename() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
 
-        repository.save(Specialty.load(SpecialtyTestFactory.Surgery.loadCommand()));
+        repository.save(SpecialtyTestFactory.Surgery.load());
 
         final var command = new SpecialtyCommand.Rename(
             SpecialtyTestFactory.Surgery.ID,
@@ -60,7 +59,7 @@ class SpecialtyCatalogTest {
         assertThat(result.id()).isEqualTo(SpecialtyTestFactory.Surgery.ID);
         assertThat(result.name()).isEqualTo(newName);
         assertThat(transaction.count()).isEqualTo(1);
-        assertThat(eventPublisher.events.getFirst())
+        assertThat(eventPublisher.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
             .isEqualTo(SpecialtyEvent.Renamed.class.getSimpleName());
     }
@@ -87,44 +86,18 @@ class SpecialtyCatalogTest {
             .hasMessageContaining("specialty versions do not match");
     }
 
-    private static class SpecialtyTestRepository implements SpecialtyRepository {
+    @Test
+    @DisplayName("I can find all specialities")
+    void testFindAll() {
+        repository.save(SpecialtyTestFactory.Surgery.load());
+        repository.save(SpecialtyTestFactory.Dentistry.load());
+        repository.save(SpecialtyTestFactory.Radiology.load());
 
-        private final AtomicLong idSequence = new AtomicLong();
-        private final AtomicInteger versionSequence = new AtomicInteger();
+        List<Specialty> results = catalog.findAll();
 
-        private final List<Specialty> specialties = new ArrayList<>();
-
-        @Override
-        public Specialty save(Specialty specialty) {
-            Objects.requireNonNull(specialty);
-            this.specialties.add(specialty);
-            SpecialtyCommand.Load command = new SpecialtyCommand.Load(
-                idSequence.incrementAndGet(),
-                specialty.name(),
-                versionSequence.incrementAndGet()
-            );
-            return Specialty.load(command);
-        }
-
-        @Override
-        public Optional<Specialty> findById(long id) {
-            return this.specialties.stream()
-                .filter(specialty -> specialty.id() == id)
-                .findFirst();
-        }
-
+        assertThat(results.size()).isEqualTo(3);
+        assertThat(eventPublisher.events().size()).isEqualTo(0);
+        assertThat(transaction.count()).isEqualTo(0);
     }
-
-    private static class SpecialtyTestEventPublisher implements SpecialtyEventPublisher {
-
-        private final List<SpecialtyEvent> events = new ArrayList<>();
-
-        @Override
-        public void publish(SpecialtyEvent event) {
-            this.events.add(event);
-        }
-
-    }
-
 
 }

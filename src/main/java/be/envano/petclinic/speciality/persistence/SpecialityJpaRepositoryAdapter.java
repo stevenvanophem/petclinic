@@ -3,6 +3,7 @@ package be.envano.petclinic.speciality.persistence;
 import be.envano.petclinic.speciality.Specialty;
 import be.envano.petclinic.speciality.SpecialtyRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class SpecialityJpaRepositoryAdapter implements SpecialtyRepository {
@@ -23,6 +24,13 @@ public class SpecialityJpaRepositoryAdapter implements SpecialtyRepository {
     @Override
     public Optional<Specialty> findById(long id) {
         return repository.findById(id).map(Factory::create);
+    }
+
+    @Override
+    public List<Specialty> findAll() {
+        return repository.findAll().stream()
+            .map(Factory::create)
+            .toList();
     }
 
 }
