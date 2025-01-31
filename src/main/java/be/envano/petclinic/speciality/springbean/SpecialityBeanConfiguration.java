@@ -1,5 +1,6 @@
 package be.envano.petclinic.speciality.springbean;
 
+import be.envano.petclinic.Transaction;
 import be.envano.petclinic.speciality.SpecialtyCatalog;
 import be.envano.petclinic.speciality.persistence.SpecialityJpaRepository;
 import be.envano.petclinic.speciality.persistence.SpecialityJpaRepositoryAdapter;
@@ -16,12 +17,13 @@ public class SpecialityBeanConfiguration {
 
     @Bean
     public SpecialtyCatalog specialtyCatalog(
+        Transaction transaction,
         SpecialityJpaRepository repository,
         ApplicationEventPublisher eventPublisher
     ) {
         logger.info("Initializing SpecialtyCatalog");
         final var storage = new SpecialityJpaRepositoryAdapter(repository);
-        return new SpecialtyCatalog(storage, eventPublisher::publishEvent);
+        return new SpecialtyCatalog(transaction, storage, eventPublisher::publishEvent);
     }
 
 }

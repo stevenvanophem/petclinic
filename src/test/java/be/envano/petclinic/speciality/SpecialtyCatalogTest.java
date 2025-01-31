@@ -15,10 +15,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class SpecialtyCatalogTest {
 
+    private final TestTransaction transaction = new TestTransaction();
     private final SpecialtyRepository repository = new SpecialtyTestRepository();
     private final SpecialtyTestEventPublisher eventPublisher = new SpecialtyTestEventPublisher();
 
     private final SpecialtyCatalog catalog = new SpecialtyCatalog(
+        transaction,
         repository,
         eventPublisher
     );
@@ -33,6 +35,7 @@ class SpecialtyCatalogTest {
         assertThat(result).isNotNull();
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.name()).isEqualTo(SpecialtyTestFactory.Surgery.NAME);
+        assertThat(transaction.count()).isEqualTo(1);
         assertThat(eventPublisher.events.getFirst())
             .extracting(event -> event.getClass().getSimpleName())
             .isEqualTo(SpecialtyEvent.Registered.class.getSimpleName());
@@ -56,6 +59,7 @@ class SpecialtyCatalogTest {
         assertThat(result).isNotNull();
         assertThat(result.id()).isEqualTo(SpecialtyTestFactory.Surgery.ID);
         assertThat(result.name()).isEqualTo(newName);
+        assertThat(transaction.count()).isEqualTo(1);
         assertThat(eventPublisher.events.getFirst())
             .extracting(event -> event.getClass().getSimpleName())
             .isEqualTo(SpecialtyEvent.Renamed.class.getSimpleName());

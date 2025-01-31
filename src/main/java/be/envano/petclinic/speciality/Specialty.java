@@ -1,10 +1,12 @@
 package be.envano.petclinic.speciality;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Specialty {
+
+    private final List<SpecialtyEvent> events = new ArrayList<>();
 
     private long id;
     private Name name;
@@ -24,25 +26,17 @@ public class Specialty {
     Specialty(SpecialtyCommand.Register command) {
         Objects.requireNonNull(command);
         this.name = command.name();
+        this.events.add(new SpecialtyEvent.Registered(this));
     }
 
-    Specialty rename(SpecialtyCommand.Rename command) {
+    void rename(SpecialtyCommand.Rename command) {
         Objects.requireNonNull(command);
 
         if (this.version != command.version())
             throw new IllegalStateException("specialty versions do not match");
 
         this.name = command.name();
-        return this;
-    }
-
-    public <T> T andThen(Function<Specialty, T> function) {
-        return function.apply(this);
-    }
-
-    public Specialty peek(Consumer<Specialty> action) {
-        action.accept(this);
-        return this;
+        this.events.add(new SpecialtyEvent.Renamed(this));
     }
 
     public long id() {
@@ -55,6 +49,10 @@ public class Specialty {
 
     public int version() {
         return version;
+    }
+
+    public List<SpecialtyEvent> events() {
+        return List.copyOf(events);
     }
 
     public record Name(String value) {
