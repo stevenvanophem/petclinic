@@ -2,7 +2,7 @@ package be.envano.petclinic.speciality.bean;
 
 import be.envano.petclinic.speciality.SpecialtyCatalog;
 import be.envano.petclinic.speciality.persistence.SpecialityJpaRepository;
-import be.envano.petclinic.speciality.persistence.SpecialityStorage;
+import be.envano.petclinic.speciality.persistence.SpecialityJpaRepositoryAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,7 +20,7 @@ public class SpecialityBeanConfiguration {
         ApplicationEventPublisher eventPublisher
     ) {
         logger.info("Initializing SpecialtyCatalog");
-        final var storage = new SpecialityStorage(repository);
+        final var storage = new SpecialityJpaRepositoryAdapter(repository);
         return new SpecialtyCatalog(storage, eventPublisher::publishEvent);
     }
 

@@ -5,11 +5,11 @@ import be.envano.petclinic.speciality.SpecialtyRepository;
 
 import java.util.Optional;
 
-public class SpecialityStorage implements SpecialtyRepository {
+public class SpecialityJpaRepositoryAdapter implements SpecialtyRepository {
 
     private final SpecialityJpaRepository repository;
 
-    public SpecialityStorage(SpecialityJpaRepository repository) {
+    public SpecialityJpaRepositoryAdapter(SpecialityJpaRepository repository) {
         this.repository = repository;
     }
 

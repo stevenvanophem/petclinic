@@ -18,7 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class SpecialityStorageTest {
 
     @Autowired
-    private SpecialityStorage storage;
+    private SpecialityJpaRepositoryAdapter storage;
 
     @Test
     @DisplayName("I can store a specialty")
@@ -54,8 +54,8 @@ class SpecialityStorageTest {
     static class LocalConfiguration {
 
         @Bean
-        SpecialityStorage specialityStorage(SpecialityJpaRepository repository) {
-            return new SpecialityStorage(repository);
+        SpecialityJpaRepositoryAdapter specialityStorage(SpecialityJpaRepository repository) {
+            return new SpecialityJpaRepositoryAdapter(repository);
         }
 
     }
