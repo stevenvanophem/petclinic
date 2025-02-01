@@ -1,18 +1,20 @@
 package be.envano.petclinic.speciality.persistence;
 
-import be.envano.petclinic.speciality.Specialty;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-
-import java.util.function.Function;
 
 @Entity
 @Table(name = "specialties")
 class SpecialtyJpaModel {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "specialty_seq")
+    @SequenceGenerator(name = "specialty_seq", sequenceName = "specialty_sequence", allocationSize = 1)
     Long id;
 
     String name;
@@ -21,10 +23,6 @@ class SpecialtyJpaModel {
     int version;
 
     protected SpecialtyJpaModel() {
-    }
-
-    <T> T andThen(Function<SpecialtyJpaModel, T> function) {
-        return function.apply(this);
     }
 
 }

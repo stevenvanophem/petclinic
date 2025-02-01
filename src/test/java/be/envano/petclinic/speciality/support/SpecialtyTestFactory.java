@@ -10,36 +10,42 @@ public class SpecialtyTestFactory {
 
     public static class Radiology {
 
-        public static final long ID = 1L;
-        public static final int VERSION = 0;
         public static final Specialty.Name NAME = new Specialty.Name("radiology");
 
+        public static SpecialtyCommand.Register createRegisterCommand() {
+            return new SpecialtyCommand.Register(NAME);
+        }
+
         public static Specialty load() {
-            return Specialty.load(new SpecialtyCommand.Load(ID, NAME, VERSION));
+            return Specialty.load(new SpecialtyCommand.Load(1L, NAME, 0));
         }
 
     }
 
     public static class Surgery {
 
-        public static final long ID = 2L;
-        public static final int VERSION = 0;
         public static final Specialty.Name NAME = new Specialty.Name("surgery");
 
+        public static SpecialtyCommand.Register createRegisterCommand() {
+            return new SpecialtyCommand.Register(NAME);
+        }
+
         public static Specialty load() {
-            return Specialty.load(new SpecialtyCommand.Load(ID, NAME, VERSION));
+            return Specialty.load(new SpecialtyCommand.Load(2L, NAME, 0));
         }
 
     }
 
     public static class Dentistry {
 
-        public static final long ID = 3L;
-        public static final int VERSION = 0;
         public static final Specialty.Name NAME = new Specialty.Name("dentistry");
 
+        public static SpecialtyCommand.Register createRegisterCommand() {
+            return new SpecialtyCommand.Register(NAME);
+        }
+
         public static Specialty load() {
-            return Specialty.load(new SpecialtyCommand.Load(ID, NAME, VERSION));
+            return Specialty.load(new SpecialtyCommand.Load(3L, NAME, 0));
         }
 
     }

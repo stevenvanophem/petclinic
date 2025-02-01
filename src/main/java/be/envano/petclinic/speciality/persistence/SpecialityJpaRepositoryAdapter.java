@@ -16,9 +16,9 @@ public class SpecialityJpaRepositoryAdapter implements SpecialtyRepository {
 
     @Override
     public Specialty save(Specialty specialty) {
-        return Factory.create(specialty)
-            .andThen(repository::save)
-            .andThen(Factory::create);
+        SpecialtyJpaModel model = Factory.create(specialty);
+        SpecialtyJpaModel flushed = repository.saveAndFlush(model);
+        return Factory.create(flushed);
     }
 
     @Override

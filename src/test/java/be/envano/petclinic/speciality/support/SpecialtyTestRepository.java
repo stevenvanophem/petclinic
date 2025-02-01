@@ -1,8 +1,8 @@
 package be.envano.petclinic.speciality.support;
 
 import be.envano.petclinic.speciality.Specialty;
-import be.envano.petclinic.speciality.SpecialtyCommand;
 import be.envano.petclinic.speciality.SpecialtyRepository;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +21,10 @@ public class SpecialtyTestRepository implements SpecialtyRepository {
     @Override
     public Specialty save(Specialty specialty) {
         Objects.requireNonNull(specialty);
+        ReflectionTestUtils.setField(specialty, "id", idSequence.incrementAndGet());
+        ReflectionTestUtils.setField(specialty, "version", versionSequence.incrementAndGet());
         this.specialties.add(specialty);
-        SpecialtyCommand.Load command = new SpecialtyCommand.Load(
-            idSequence.incrementAndGet(),
-            specialty.name(),
-            versionSequence.incrementAndGet()
-        );
-        return Specialty.load(command);
+        return specialty;
     }
 
     @Override

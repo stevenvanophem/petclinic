@@ -10,7 +10,6 @@ class Factory {
 
     static SpecialtyJpaModel create(Specialty specialty) {
         SpecialtyJpaModel model = new SpecialtyJpaModel();
-        model.id = specialty.id();
         model.name = specialty.name().toString();
         return model;
     }

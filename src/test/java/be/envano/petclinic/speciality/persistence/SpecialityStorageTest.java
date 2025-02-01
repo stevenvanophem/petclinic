@@ -27,9 +27,9 @@ class SpecialityStorageTest {
         Specialty result = storage.save(surgery);
 
         assertThat(result).isNotNull();
-        assertThat(result.id()).isEqualTo(SpecialtyTestFactory.Surgery.ID);
+        assertThat(result.id()).isNotEqualTo(0L);
         assertThat(result.name()).isEqualTo(SpecialtyTestFactory.Surgery.NAME);
-        assertThat(result.version()).isEqualTo(SpecialtyTestFactory.Surgery.VERSION);
+        assertThat(result.version()).isEqualTo(0);
     }
 
     @Test
@@ -43,9 +43,9 @@ class SpecialityStorageTest {
         assertThat(result)
             .isPresent()
             .hasValueSatisfying(value -> {
-                assertThat(value.id()).isEqualTo(SpecialtyTestFactory.Surgery.ID);
+                assertThat(value.id()).isNotEqualTo(0L);
                 assertThat(value.name()).isEqualTo(SpecialtyTestFactory.Surgery.NAME);
-                assertThat(value.version()).isEqualTo(SpecialtyTestFactory.Surgery.VERSION);
+                assertThat(value.version()).isEqualTo(0);
             });
     }
 

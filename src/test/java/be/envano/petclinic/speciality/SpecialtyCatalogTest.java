@@ -45,18 +45,18 @@ class SpecialtyCatalogTest {
     void testRename() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
 
-        repository.save(SpecialtyTestFactory.Surgery.load());
+        Specialty stored = repository.save(SpecialtyTestFactory.Surgery.load());
 
         final var command = new SpecialtyCommand.Rename(
-            SpecialtyTestFactory.Surgery.ID,
+            stored.id(),
             newName,
-            SpecialtyTestFactory.Surgery.VERSION
+            stored.version()
         );
 
         Specialty result = catalog.rename(command);
 
         assertThat(result).isNotNull();
-        assertThat(result.id()).isEqualTo(SpecialtyTestFactory.Surgery.ID);
+        assertThat(result.id()).isEqualTo(stored.id());
         assertThat(result.name()).isEqualTo(newName);
         assertThat(transaction.count()).isEqualTo(1);
         assertThat(eventPublisher.events().getFirst())
@@ -69,14 +69,14 @@ class SpecialtyCatalogTest {
     void testRenameMismatch() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
 
-        repository.save(Specialty.load(new SpecialtyCommand.Load(
-            SpecialtyTestFactory.Surgery.ID,
+        Specialty stored = repository.save(Specialty.load(new SpecialtyCommand.Load(
+            1L,
             SpecialtyTestFactory.Surgery.NAME,
-            5
+            1
         )));
 
         final var command = new SpecialtyCommand.Rename(
-            SpecialtyTestFactory.Surgery.ID,
+            stored.id(),
             newName,
             4
         );
