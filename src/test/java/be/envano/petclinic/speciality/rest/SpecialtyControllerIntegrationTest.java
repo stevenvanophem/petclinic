@@ -17,6 +17,8 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.web.client.RestClient;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -40,6 +42,7 @@ class SpecialtyControllerIntegrationTest {
 
     @AfterEach
     void tearDown(@Autowired JdbcClient jdbcClient) {
+        eventConsumer.events().clear();
         JdbcTestUtils.deleteFromTables(jdbcClient, "specialties");
     }
 
@@ -70,11 +73,7 @@ class SpecialtyControllerIntegrationTest {
         assertThat(events.getFirst()).isInstanceOf(SpecialtyEvent.Registered.class);
 
         SpecialtyTableRecord record = jdbcClient.sql("select * from specialties")
-            .query((rs, rowNum) -> new SpecialtyTableRecord(
-                rs.getLong("id"),
-                rs.getString("name"),
-                rs.getInt("version")
-            ))
+            .query((rs, rowNum) -> createTableRecord(rs))
             .optional()
             .orElseThrow();
 
@@ -82,6 +81,14 @@ class SpecialtyControllerIntegrationTest {
         assertThat(record.id()).isEqualTo(1L);
         assertThat(record.name()).isEqualTo(SpecialtyTestFactory.Radiology.NAME.toString());
         assertThat(record.version()).isEqualTo(0);
+    }
+
+    private static SpecialtyTableRecord createTableRecord(ResultSet rs) throws SQLException {
+        return new SpecialtyTableRecord(
+            rs.getLong("id"),
+            rs.getString("name"),
+            rs.getInt("version")
+        );
     }
 
     private record SpecialtyTableRecord(long id, String name, int version) {}
