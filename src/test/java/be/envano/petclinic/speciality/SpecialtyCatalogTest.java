@@ -3,7 +3,7 @@ package be.envano.petclinic.speciality;
 import be.envano.petclinic.speciality.support.SpecialtyTestEventPublisher;
 import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
 import be.envano.petclinic.speciality.support.SpecialtyTestRepository;
-import be.envano.petclinic.util.transaction.TestTransaction;
+import be.envano.petclinic.speciality.support.SpecialtyTestTransaction;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,13 +14,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class SpecialtyCatalogTest {
 
-    private final TestTransaction transaction = new TestTransaction();
     private final SpecialtyRepository repository = new SpecialtyTestRepository();
+    private final SpecialtyTestTransaction transaction = new SpecialtyTestTransaction();
     private final SpecialtyTestEventPublisher eventPublisher = new SpecialtyTestEventPublisher();
 
     private final SpecialtyCatalog catalog = new SpecialtyCatalog(
-        transaction,
         repository,
+        transaction,
         eventPublisher
     );
 
