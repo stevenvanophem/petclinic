@@ -1,7 +1,8 @@
 package be.envano.petclinic.speciality.springbean;
 
+import be.envano.petclinic.core.transaction.Transaction;
+import be.envano.petclinic.core.transaction.springbean.TransactionFactory;
 import be.envano.petclinic.speciality.SpecialtyCatalog;
-import be.envano.petclinic.speciality.SpecialtyTransaction;
 import be.envano.petclinic.speciality.persistence.SpecialityJpaRepository;
 import be.envano.petclinic.speciality.persistence.SpecialityJpaRepositoryAdapter;
 import org.slf4j.Logger;
@@ -24,8 +25,8 @@ public class SpecialityBeanConfiguration {
     ) {
         logger.info("Initializing SpecialtyCatalog");
         final var storage = new SpecialityJpaRepositoryAdapter(repository);
-        final SpecialtyTransaction transaction = supplier -> transactionTemplate.execute(tx -> supplier.get());
-        return new SpecialtyCatalog(storage, transaction, eventPublisher::publishEvent);
+        final Transaction transaction = TransactionFactory.configure(transactionTemplate);
+        return new SpecialtyCatalog(transaction, storage, eventPublisher::publishEvent);
     }
 
 }

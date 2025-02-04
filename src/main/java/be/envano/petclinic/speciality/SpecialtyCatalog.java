@@ -1,6 +1,8 @@
 package be.envano.petclinic.speciality;
 
 
+import be.envano.petclinic.core.transaction.Transaction;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -12,13 +14,13 @@ public class SpecialtyCatalog {
 
     private static final Logger LOGGER = getLogger(SpecialtyCatalog.class.getName());
 
+    private final Transaction transaction;
     private final SpecialtyRepository repository;
-    private final SpecialtyTransaction transaction;
     private final SpecialtyEventPublisher eventPublisher;
 
     public SpecialtyCatalog(
+        Transaction transaction,
         SpecialtyRepository repository,
-        SpecialtyTransaction transaction,
         SpecialtyEventPublisher eventPublisher
     ) {
         this.eventPublisher = eventPublisher;
