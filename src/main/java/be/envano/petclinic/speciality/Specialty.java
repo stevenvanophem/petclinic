@@ -8,7 +8,7 @@ public class Specialty {
 
     private final List<SpecialtyEvent> events = new ArrayList<>();
 
-    private long id;
+    private Id id;
     private Name name;
     private int version;
 
@@ -39,7 +39,7 @@ public class Specialty {
         this.events.add(new SpecialtyEvent.Renamed(this));
     }
 
-    public long id() {
+    public Id id() {
         return id;
     }
 
@@ -53,6 +53,19 @@ public class Specialty {
 
     public List<SpecialtyEvent> events() {
         return List.copyOf(events);
+    }
+
+    public record Id(long value) {
+
+        public Id {
+            if (value < 1)
+                throw new IllegalArgumentException("specialty id must be positive");
+        }
+
+        public static Id fromLong(Long value) {
+            return new Id(value);
+        }
+
     }
 
     public record Name(String value) {

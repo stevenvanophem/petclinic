@@ -7,7 +7,7 @@ public interface SpecialtyRepository {
 
     Specialty save(Specialty specialty);
 
-    Optional<Specialty> findById(long id);
+    Optional<Specialty> findById(Specialty.Id id);
 
     List<Specialty> findAll();
 

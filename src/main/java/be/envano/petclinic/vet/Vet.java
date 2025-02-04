@@ -1,43 +1,86 @@
 package be.envano.petclinic.vet;
 
+import be.envano.petclinic.speciality.Specialty;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Vet {
 
-    private long id;
-    private Name name;
-    private int version;
+    private final List<VetEvent> events = new ArrayList<>();
 
-    public static Vet load(VetCommand.Load command) {
-        return new Vet(command);
-    }
+    private Id id;
+    private Name name;
+    private List<Specialty.Id> specialties;
+    private int version;
 
     public Vet(VetCommand.Load command) {
         Objects.requireNonNull(command);
         this.id = command.id();
         this.name = command.name();
         this.version = command.version();
+        this.specialties = List.copyOf(command.specialties());
     }
 
-    public static Vet hire(VetCommand.Hire command) {
-        return new Vet(command);
-    }
-
-    private Vet(VetCommand.Hire command) {
+    public Vet(VetCommand.Hire command) {
         Objects.requireNonNull(command);
         this.name = command.name();
+        this.specialties = List.copyOf(command.specialties());
+        this.events.add(new VetEvent.Hired(this));
     }
 
     public void rename(VetCommand.Rename command) {
         Objects.requireNonNull(command);
 
+        Name originalName = this.name;
+
         if (this.name.equals(command.name()))
             throw new IllegalArgumentException("Name cannot be the same");
+        if (this.version != command.version())
+            throw new IllegalArgumentException("Vet versions must be the same");
 
         this.name = command.name();
+        this.events.add(new VetEvent.Renamed(this, originalName));
     }
 
-    public long id() {
+    public void specialize(VetCommand.Specialize command) {
+        Objects.requireNonNull(command);
+
+        List<Specialty.Id> original = this.specialties;
+
+        for (Specialty.Id specialty : this.specialties) {
+            if (command.specialities().contains(specialty))
+                throw new IllegalArgumentException("Specialty cannot be the same");
+        }
+        if (this.version != command.version())
+            throw new IllegalArgumentException("Vet versions must be the same");
+
+        List<Specialty.Id> newSpecialties = new ArrayList<>(this.specialties);
+        newSpecialties.addAll(command.specialities());
+
+        this.specialties = List.copyOf(newSpecialties);
+        this.events.add(new VetEvent.Specialized(this, original));
+    }
+
+    public void deSpecialize(VetCommand.DeSpecialize command) {
+        Objects.requireNonNull(command);
+
+        Specialty.Id specialityToRemove = command.speciality();
+
+        if (!this.specialties.contains(specialityToRemove))
+            throw new IllegalArgumentException("Specialty does not exist");
+        if (this.version != command.version())
+            throw new IllegalArgumentException("Vet versions must be the same");
+
+        List<Specialty.Id> specialties = new ArrayList<>(this.specialties);
+        specialties.remove(specialityToRemove);
+
+        this.specialties = List.copyOf(specialties);
+        this.events.add(new VetEvent.DeSpecialized(this, specialityToRemove));
+    }
+
+    public Id id() {
         return id;
     }
 
@@ -49,11 +92,39 @@ public class Vet {
         return version;
     }
 
+    public List<Specialty.Id> specialties() {
+        return specialties;
+    }
+
+    public List<VetEvent> events() {
+        return events;
+    }
+
+    public record Id(long value) {
+
+        public Id {
+            if (value < 1)
+                throw new IllegalArgumentException("vet id must be positive");
+        }
+
+        public static Id fromLong(long value) {
+            return new Id(value);
+        }
+
+    }
+
     public record Name(First first, Last last) {
 
         public Name {
             Objects.requireNonNull(first);
             Objects.requireNonNull(last);
+        }
+
+        public static Name fromStrings(String first, String last) {
+            return new Name(
+                new First(first),
+                new Last(last)
+            );
         }
 
         public record First(String value) {

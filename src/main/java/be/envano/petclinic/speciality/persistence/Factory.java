@@ -16,7 +16,7 @@ class Factory {
 
     static Specialty create(SpecialtyJpaModel model) {
         SpecialtyCommand.Load command = new SpecialtyCommand.Load(
-            model.id,
+            Specialty.Id.fromLong(model.id),
             Specialty.Name.fromString(model.name),
             model.version
         );

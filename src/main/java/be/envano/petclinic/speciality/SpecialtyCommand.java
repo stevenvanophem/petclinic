@@ -5,7 +5,7 @@ import java.util.Objects;
 public interface SpecialtyCommand {
 
     record Load(
-        long id,
+        Specialty.Id id,
         Specialty.Name name,
         int version
     ) {
@@ -27,7 +27,7 @@ public interface SpecialtyCommand {
     }
 
     record Rename(
-        long id,
+        Specialty.Id id,
         Specialty.Name name,
         int version
     ) {

@@ -22,8 +22,8 @@ public class SpecialityJpaRepositoryAdapter implements SpecialtyRepository {
     }
 
     @Override
-    public Optional<Specialty> findById(long id) {
-        return repository.findById(id).map(Factory::create);
+    public Optional<Specialty> findById(Specialty.Id id) {
+        return repository.findById(id.value()).map(Factory::create);
     }
 
     @Override
