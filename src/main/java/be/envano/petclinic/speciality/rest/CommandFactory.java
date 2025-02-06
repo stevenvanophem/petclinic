@@ -5,7 +5,7 @@ import be.envano.petclinic.speciality.SpecialtyCommand;
 
 final class CommandFactory {
 
-     private CommandFactory() {
+    private CommandFactory() {
     }
 
     static SpecialtyCommand.Register create(RestModel.PostRequest request) {
@@ -13,9 +13,10 @@ final class CommandFactory {
         return new SpecialtyCommand.Register(name);
     }
 
-    static SpecialtyCommand.Rename create(RestModel.RenameRequest request, long id) {
-         final var name = Specialty.Name.fromString(request.name());
-         return new SpecialtyCommand.Rename(id, name, request.version());
+    static SpecialtyCommand.Rename create(RestModel.RenameRequest request, long idAsLong) {
+        final var id = Specialty.Id.fromLong(idAsLong);
+        final var name = Specialty.Name.fromString(request.name());
+        return new SpecialtyCommand.Rename(id, name, request.version());
     }
 
 }

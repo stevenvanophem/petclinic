@@ -21,14 +21,14 @@ public class SpecialtyTestRepository implements SpecialtyRepository {
     @Override
     public Specialty save(Specialty specialty) {
         Objects.requireNonNull(specialty);
-        ReflectionTestUtils.setField(specialty, "id", idSequence.incrementAndGet());
+        ReflectionTestUtils.setField(specialty, "id", Specialty.Id.fromLong(idSequence.incrementAndGet()));
         ReflectionTestUtils.setField(specialty, "version", versionSequence.incrementAndGet());
         this.specialties.add(specialty);
         return specialty;
     }
 
     @Override
-    public Optional<Specialty> findById(long id) {
+    public Optional<Specialty> findById(Specialty.Id id) {
         return this.specialties.stream()
             .filter(specialty -> specialty.id() == id)
             .findFirst();

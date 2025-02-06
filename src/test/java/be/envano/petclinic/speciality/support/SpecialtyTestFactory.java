@@ -17,7 +17,7 @@ public class SpecialtyTestFactory {
         }
 
         public static Specialty load() {
-            return Specialty.load(new SpecialtyCommand.Load(1L, NAME, 0));
+            return Specialty.load(new SpecialtyCommand.Load(Specialty.Id.fromLong(1L), NAME, 0));
         }
 
     }
@@ -31,7 +31,7 @@ public class SpecialtyTestFactory {
         }
 
         public static Specialty load() {
-            return Specialty.load(new SpecialtyCommand.Load(2L, NAME, 0));
+            return Specialty.load(new SpecialtyCommand.Load(Specialty.Id.fromLong(2L), NAME, 0));
         }
 
     }
@@ -45,7 +45,7 @@ public class SpecialtyTestFactory {
         }
 
         public static Specialty load() {
-            return Specialty.load(new SpecialtyCommand.Load(3L, NAME, 0));
+            return Specialty.load(new SpecialtyCommand.Load(Specialty.Id.fromLong(3L), NAME, 0));
         }
 
     }

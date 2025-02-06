@@ -15,6 +15,12 @@ public class TestTransaction implements Transaction {
         return specialty;
     }
 
+    @Override
+    public void perform(Runnable runnable) {
+        this.count = count + 1;
+        runnable.run();
+    }
+
     public int count() {
         return count;
     }

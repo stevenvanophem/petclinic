@@ -1,7 +1,5 @@
 package be.envano.petclinic.owner;
 
-import be.envano.petclinic.pet.Pet;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,28 +13,31 @@ public class Owner {
     private Address address;
     private City city;
     private Telephone telephone;
-    private List<Pet.Id> pets;
     private int version;
 
-    public Owner(OwnerCommand.Register command) {
+    public Owner(OwnerCommand.Load command) {
         Objects.requireNonNull(command);
-
-        Objects.requireNonNull(command.name());
-        Objects.requireNonNull(command.address());
-        Objects.requireNonNull(command.city());
-        Objects.requireNonNull(command.telephone());
-        Objects.requireNonNull(command.pets());
-
+        this.id = command.id();
         this.name = command.name();
         this.address = command.address();
         this.city = command.city();
         this.telephone = command.telephone();
-        this.pets = List.copyOf(command.pets());
+        this.version = command.version();
+    }
+
+    public Owner(OwnerCommand.Register command) {
+        Objects.requireNonNull(command);
+        this.name = command.name();
+        this.address = command.address();
+        this.city = command.city();
+        this.telephone = command.telephone();
         this.events.add(new OwnerEvent.Registered(this));
     }
 
     public void rename(OwnerCommand.Rename command) {
         Objects.requireNonNull(command);
+
+        Name originalName = this.name;
 
         if (command.version() != this.version)
             throw new IllegalArgumentException("Versions don't match");
@@ -44,6 +45,28 @@ public class Owner {
             throw new IllegalArgumentException("Name already exists");
 
         this.name = command.name();
+        this.events.add(new OwnerEvent.Renamed(this, originalName));
+    }
+
+    public void changeContactDetails(OwnerCommand.ChangeContactDetails command) {
+        Objects.requireNonNull(command);
+
+        final City originalCity = this.city;
+        final Address originalAddress = this.address;
+        final Telephone originalTelephone = this.telephone;
+
+        if (command.version() != this.version)
+            throw new IllegalArgumentException("Versions don't match");
+
+        this.address = command.address();
+        this.city = command.city();
+        this.telephone = command.telephone();
+        this.events.add(new OwnerEvent.ContactDetailsChanged(
+            this,
+            originalAddress,
+            originalTelephone,
+            originalCity
+        ));
     }
 
     public List<OwnerEvent> events() {
@@ -68,10 +91,6 @@ public class Owner {
 
     public Telephone telephone() {
         return telephone;
-    }
-
-    public List<Pet.Id> pets() {
-        return pets;
     }
 
     public record Id(long value) {

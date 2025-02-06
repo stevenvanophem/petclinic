@@ -32,7 +32,7 @@ class SpecialtyCatalogTest {
         Specialty result = catalog.register(command);
 
         assertThat(result).isNotNull();
-        assertThat(result.id()).isEqualTo(1L);
+        assertThat(result.id()).isEqualTo(Specialty.Id.one());
         assertThat(result.name()).isEqualTo(SpecialtyTestFactory.Surgery.NAME);
         assertThat(transaction.count()).isEqualTo(1);
         assertThat(eventPublisher.events().getFirst())
@@ -70,7 +70,7 @@ class SpecialtyCatalogTest {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
 
         Specialty stored = repository.save(Specialty.load(new SpecialtyCommand.Load(
-            1L,
+            Specialty.Id.fromLong(1L),
             SpecialtyTestFactory.Surgery.NAME,
             1
         )));

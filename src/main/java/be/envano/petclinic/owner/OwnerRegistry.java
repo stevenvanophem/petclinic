@@ -58,4 +58,23 @@ public class OwnerRegistry {
         });
     }
 
+    public Owner changeContactDetails(OwnerCommand.ChangeContactDetails command) {
+        Objects.requireNonNull(command);
+
+        LOGGER.log(Level.DEBUG, "Changing an owner");
+        LOGGER.log(Level.TRACE, command.toString());
+
+        return transaction.perform(() -> {
+            final Owner.Id id = command.id();
+
+            Owner owner = repository.findById(id).orElseThrow(() -> new OwnerException.NotFound(id));
+            owner.changeContactDetails(command);
+
+            Owner storedOwner = repository.save(owner);
+            storedOwner.events().forEach(eventPublisher::publish);
+
+            return storedOwner;
+        });
+    }
+
 }

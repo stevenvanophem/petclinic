@@ -15,11 +15,13 @@ public sealed interface SpecialtyEvent {
     }
 
     record Renamed(
-        Specialty specialty
+        Specialty specialty,
+        Specialty.Name originalName
     ) implements SpecialtyEvent {
 
         public Renamed {
             Objects.requireNonNull(specialty);
+            Objects.requireNonNull(originalName);
         }
 
     }

@@ -9,7 +9,7 @@ final class ResponseFactory {
 
     static RestModel.Response create(Specialty specialty) {
         return new RestModel.Response(
-            specialty.id(),
+            specialty.id().toLong(),
             specialty.name().toString(),
             specialty.version()
         );

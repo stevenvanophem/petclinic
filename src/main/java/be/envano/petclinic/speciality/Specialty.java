@@ -32,11 +32,13 @@ public class Specialty {
     void rename(SpecialtyCommand.Rename command) {
         Objects.requireNonNull(command);
 
+        Specialty.Name originalName = this.name;
+
         if (this.version != command.version())
             throw new IllegalStateException("specialty versions do not match");
 
         this.name = command.name();
-        this.events.add(new SpecialtyEvent.Renamed(this));
+        this.events.add(new SpecialtyEvent.Renamed(this, originalName));
     }
 
     public Id id() {
@@ -64,6 +66,14 @@ public class Specialty {
 
         public static Id fromLong(Long value) {
             return new Id(value);
+        }
+
+        public static Id one() {
+            return new Id(1L);
+        }
+
+        public long toLong() {
+            return value;
         }
 
     }

@@ -16,6 +16,11 @@ public class TransactionFactory {
             public <T> T perform(Supplier<T> supplier) {
                 return transactionTemplate.execute(tx -> supplier.get());
             }
+
+            @Override
+            public void perform(Runnable runnable) {
+                transactionTemplate.executeWithoutResult(tx -> runnable.run());
+            }
         };
     }
 
