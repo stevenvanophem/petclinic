@@ -23,8 +23,7 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 	@Override
 	public Specialty.Id nextId() {
 		String sql = """
-			SELECT SPECIALTY_SEQUENCE.NEXTVAL 
-			FROM DUAL
+			SELECT nextval('specialty_sequence')
 			""";
 
 		long value = jdbcClient.sql(sql)
@@ -40,7 +39,7 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 		Objects.requireNonNull(specialty);
 
 		String sql = """
-			INSERT INTO SPECIALTY (ID, NAME, VERSION)
+			INSERT INTO specialty (ID, NAME, VERSION)
 			VALUES (:id, :name, :version)
 			""";
 
@@ -63,7 +62,7 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 		final int newVersion = currentVersion + 1;
 
 		String sql = """
-			UPDATE SPECIALTY
+			UPDATE specialty
 			SET NAME = :name, VERSION = :newVersion
 			WHERE ID = :id AND VERSION = :currentVersion
 			""";
@@ -91,7 +90,7 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 	public Optional<Specialty> findById(Specialty.Id id) {
 		String sql = """
 			SELECT ID, NAME, VERSION
-			FROM SPECIALTY
+			FROM specialty
 			WHERE ID = :id
 			""";
 		return jdbcClient.sql(sql)
@@ -104,7 +103,7 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 	public List<Specialty> findAll() {
 		String sql = """
 			SELECT ID, NAME, VERSION
-			FROM SPECIALTY
+			FROM specialty
 			ORDER BY ID
 			""";
 
