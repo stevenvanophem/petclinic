@@ -10,7 +10,7 @@ public class Specialty {
 
     private final Id id;
     private Name name;
-    private int version;
+    private final int version;
 
     public static Specialty load(SpecialtyCommand.Load command) {
         return new Specialty(command);

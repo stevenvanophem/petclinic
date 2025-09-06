@@ -33,7 +33,7 @@ public class SpecialtyCatalog {
         Objects.requireNonNull(command);
 
         LOGGER.log(Level.DEBUG, "Registering specialty");
-        LOGGER.log(Level.TRACE, command.toString());
+        LOGGER.log(Level.TRACE, command::toString);
 
         return transaction.in(() -> {
 			Specialty.Id id = repository.nextId();
@@ -47,7 +47,7 @@ public class SpecialtyCatalog {
         Objects.requireNonNull(command);
 
         LOGGER.log(Level.DEBUG, "Renaming specialty");
-        LOGGER.log(Level.TRACE, command.toString());
+        LOGGER.log(Level.TRACE, command::toString);
 
         return transaction.in(() -> {
             Specialty specialty = repository.findById(command.id()).orElseThrow();
@@ -58,6 +58,8 @@ public class SpecialtyCatalog {
     }
 
     public List<Specialty> findAll() {
+		LOGGER.log(Level.DEBUG, "Find all specialties");
+
         return repository.findAll();
     }
 

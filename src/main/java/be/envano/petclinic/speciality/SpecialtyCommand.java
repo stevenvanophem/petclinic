@@ -11,6 +11,7 @@ public interface SpecialtyCommand {
     ) {
 
         public Load {
+			Objects.requireNonNull(id);
             Objects.requireNonNull(name);
         }
 
