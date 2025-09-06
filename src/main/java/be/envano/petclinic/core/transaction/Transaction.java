@@ -4,8 +4,8 @@ import java.util.function.Supplier;
 
 public interface Transaction {
 
-    <T> T perform(Supplier<T> supplier);
+    <T> T in(Supplier<T> supplier);
 
-    void perform(Runnable runnable);
+    void in(Runnable runnable);
 
 }

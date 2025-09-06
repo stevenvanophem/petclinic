@@ -9,14 +9,14 @@ public class TestTransaction implements Transaction {
     private int count;
 
     @Override
-    public <T> T perform(Supplier<T> supplier) {
+    public <T> T in(Supplier<T> supplier) {
         T specialty = supplier.get();
         this.count = count + 1;
         return specialty;
     }
 
     @Override
-    public void perform(Runnable runnable) {
+    public void in(Runnable runnable) {
         this.count = count + 1;
         runnable.run();
     }

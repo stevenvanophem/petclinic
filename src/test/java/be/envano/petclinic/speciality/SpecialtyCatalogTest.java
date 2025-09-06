@@ -1,7 +1,7 @@
 package be.envano.petclinic.speciality;
 
+import be.envano.petclinic.core.journal.support.TestJournal;
 import be.envano.petclinic.core.transaction.support.TestTransaction;
-import be.envano.petclinic.speciality.support.SpecialtyTestEventPublisher;
 import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
 import be.envano.petclinic.speciality.support.SpecialtyTestRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,14 +14,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class SpecialtyCatalogTest {
 
-    private final TestTransaction transaction = new TestTransaction();
-    private final SpecialtyRepository repository = new SpecialtyTestRepository();
-    private final SpecialtyTestEventPublisher eventPublisher = new SpecialtyTestEventPublisher();
+	private final TestJournal journal = new TestJournal();
+	private final TestTransaction transaction = new TestTransaction();
+	private final SpecialtyRepository repository = new SpecialtyTestRepository();
 
     private final SpecialtyCatalog catalog = new SpecialtyCatalog(
-        transaction,
-        repository,
-        eventPublisher
+        journal,
+		transaction,
+        repository
     );
 
     @Test
@@ -35,7 +35,7 @@ class SpecialtyCatalogTest {
         assertThat(result.id()).isEqualTo(Specialty.Id.one());
         assertThat(result.name()).isEqualTo(SpecialtyTestFactory.Surgery.NAME);
         assertThat(transaction.count()).isEqualTo(1);
-        assertThat(eventPublisher.events().getFirst())
+        assertThat(journal.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
             .isEqualTo(SpecialtyEvent.Registered.class.getSimpleName());
     }
@@ -45,7 +45,7 @@ class SpecialtyCatalogTest {
     void testRename() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
 
-        Specialty stored = repository.save(SpecialtyTestFactory.Surgery.load());
+        Specialty stored = repository.add(SpecialtyTestFactory.Surgery.load());
 
         final var command = new SpecialtyCommand.Rename(
             stored.id(),
@@ -59,7 +59,7 @@ class SpecialtyCatalogTest {
         assertThat(result.id()).isEqualTo(stored.id());
         assertThat(result.name()).isEqualTo(newName);
         assertThat(transaction.count()).isEqualTo(1);
-        assertThat(eventPublisher.events().getFirst())
+        assertThat(journal.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
             .isEqualTo(SpecialtyEvent.Renamed.class.getSimpleName());
     }
@@ -69,7 +69,7 @@ class SpecialtyCatalogTest {
     void testRenameMismatch() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
 
-        Specialty stored = repository.save(Specialty.load(new SpecialtyCommand.Load(
+        Specialty stored = repository.add(Specialty.load(new SpecialtyCommand.Load(
             Specialty.Id.fromLong(1L),
             SpecialtyTestFactory.Surgery.NAME,
             1
@@ -89,14 +89,14 @@ class SpecialtyCatalogTest {
     @Test
     @DisplayName("I can find all specialities")
     void testFindAll() {
-        repository.save(SpecialtyTestFactory.Surgery.load());
-        repository.save(SpecialtyTestFactory.Dentistry.load());
-        repository.save(SpecialtyTestFactory.Radiology.load());
+        repository.add(SpecialtyTestFactory.Surgery.load());
+        repository.add(SpecialtyTestFactory.Dentistry.load());
+        repository.add(SpecialtyTestFactory.Radiology.load());
 
         List<Specialty> results = catalog.findAll();
 
         assertThat(results.size()).isEqualTo(3);
-        assertThat(eventPublisher.events().size()).isEqualTo(0);
+        assertThat(journal.events().size()).isEqualTo(0);
         assertThat(transaction.count()).isEqualTo(0);
     }
 

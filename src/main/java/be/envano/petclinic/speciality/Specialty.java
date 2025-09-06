@@ -8,7 +8,7 @@ public class Specialty {
 
     private final List<SpecialtyEvent> events = new ArrayList<>();
 
-    private Id id;
+    private final Id id;
     private Name name;
     private int version;
 
@@ -23,9 +23,12 @@ public class Specialty {
         this.version = command.version();
     }
 
-    Specialty(SpecialtyCommand.Register command) {
-        Objects.requireNonNull(command);
+    Specialty(Id id, SpecialtyCommand.Register command) {
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(command);
+		this.id = id;
         this.name = command.name();
+		this.version = 0;
         this.events.add(new SpecialtyEvent.Registered(this));
     }
 

@@ -1,6 +1,7 @@
 package be.envano.petclinic.speciality;
 
 
+import be.envano.petclinic.core.journal.Journal;
 import be.envano.petclinic.core.transaction.Transaction;
 
 import java.util.List;
@@ -14,19 +15,19 @@ public class SpecialtyCatalog {
 
     private static final Logger LOGGER = getLogger(SpecialtyCatalog.class.getName());
 
-    private final Transaction transaction;
-    private final SpecialtyRepository repository;
-    private final SpecialtyEventPublisher eventPublisher;
+	private final Journal journal;
+	private final Transaction transaction;
+	private final SpecialtyRepository repository;
 
     public SpecialtyCatalog(
+		Journal journal,
         Transaction transaction,
-        SpecialtyRepository repository,
-        SpecialtyEventPublisher eventPublisher
+        SpecialtyRepository repository
     ) {
-        this.eventPublisher = eventPublisher;
         this.transaction = transaction;
-        this.repository = repository;
-    }
+		this.repository = repository;
+		this.journal = journal;
+	}
 
     public Specialty register(SpecialtyCommand.Register command) {
         Objects.requireNonNull(command);
@@ -34,10 +35,11 @@ public class SpecialtyCatalog {
         LOGGER.log(Level.DEBUG, "Registering specialty");
         LOGGER.log(Level.TRACE, command.toString());
 
-        return transaction.perform(() -> {
-            Specialty specialty = new Specialty(command);
-            specialty.events().forEach(eventPublisher::publish);
-            return repository.save(specialty);
+        return transaction.in(() -> {
+			Specialty.Id id = repository.nextId();
+			Specialty specialty = new Specialty(id, command);
+            specialty.events().forEach(journal::appendEvent);
+            return repository.add(specialty);
         });
     }
 
@@ -47,11 +49,11 @@ public class SpecialtyCatalog {
         LOGGER.log(Level.DEBUG, "Renaming specialty");
         LOGGER.log(Level.TRACE, command.toString());
 
-        return transaction.perform(() -> {
+        return transaction.in(() -> {
             Specialty specialty = repository.findById(command.id()).orElseThrow();
             specialty.rename(command);
-            specialty.events().forEach(eventPublisher::publish);
-            return repository.save(specialty);
+            specialty.events().forEach(journal::appendEvent);
+            return repository.update(specialty);
         });
     }
 

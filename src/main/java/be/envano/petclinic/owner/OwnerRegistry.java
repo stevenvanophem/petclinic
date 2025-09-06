@@ -31,7 +31,7 @@ public class OwnerRegistry {
         LOGGER.log(Level.DEBUG, "Registering an owner");
         LOGGER.log(Level.TRACE, command.toString());
 
-        return transaction.perform(() -> {
+        return transaction.in(() -> {
             Owner owner = new Owner(command);
             Owner storedOwner = repository.save(owner);
             storedOwner.events().forEach(eventPublisher::publish);
@@ -45,7 +45,7 @@ public class OwnerRegistry {
         LOGGER.log(Level.DEBUG, "Renaming an owner");
         LOGGER.log(Level.TRACE, command.toString());
     
-        return transaction.perform(() -> {
+        return transaction.in(() -> {
             final Owner.Id id = command.id();
 
             Owner owner = repository.findById(id).orElseThrow(() -> new OwnerException.NotFound(id));
@@ -64,7 +64,7 @@ public class OwnerRegistry {
         LOGGER.log(Level.DEBUG, "Changing an owner");
         LOGGER.log(Level.TRACE, command.toString());
 
-        return transaction.perform(() -> {
+        return transaction.in(() -> {
             final Owner.Id id = command.id();
 
             Owner owner = repository.findById(id).orElseThrow(() -> new OwnerException.NotFound(id));

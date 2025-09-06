@@ -13,12 +13,12 @@ public class TransactionFactory {
     public static Transaction configure(TransactionTemplate transactionTemplate) {
         return new Transaction() {
             @Override
-            public <T> T perform(Supplier<T> supplier) {
+            public <T> T in(Supplier<T> supplier) {
                 return transactionTemplate.execute(tx -> supplier.get());
             }
 
             @Override
-            public void perform(Runnable runnable) {
+            public void in(Runnable runnable) {
                 transactionTemplate.executeWithoutResult(tx -> runnable.run());
             }
         };
