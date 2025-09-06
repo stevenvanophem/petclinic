@@ -1,5 +1,6 @@
 package be.envano.petclinic.core.journal.jdbc;
 
+import java.time.Instant;
 import java.util.Objects;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -25,17 +26,22 @@ public class JdbcJournal implements Journal {
 
 		String sql = """
 			INSERT INTO journal (
-				type,
-				payload_json
+			    journal_type,
+				payload_type,
+				payload_json,
+			    timestamp
 			) VALUES (
-				:eventType,
-				:payloadJson
+			    'event',
+				:payloadType,
+				:payloadJson,
+			    :timestamp
 			)
 			""";
 
 		SqlParameterSource namedParamSource = new MapSqlParameterSource()
-			.addValue("eventType", event.getClass().getName())
-			.addValue("payloadJson", jsonCodec.encode(event));
+			.addValue("payloadType", event.getClass().getName())
+			.addValue("payloadJson", jsonCodec.encode(event))
+			.addValue("timestamp", Instant.now());
 
 		jdbcClient.sql(sql)
 			.paramSource(namedParamSource)
