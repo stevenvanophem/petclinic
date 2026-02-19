@@ -1,4 +1,4 @@
-package be.envano.petclinic.specialty.jdbc;
+package be.envano.petclinic.specialty.internal.jdbc;
 
 import be.envano.petclinic.specialty.Specialty;
 import be.envano.petclinic.specialty.SpecialtyCommand;

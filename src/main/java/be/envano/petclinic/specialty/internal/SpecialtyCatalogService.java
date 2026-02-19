@@ -5,6 +5,7 @@ import be.envano.petclinic.platform.transaction.Transaction;
 import be.envano.petclinic.specialty.Specialty;
 import be.envano.petclinic.specialty.SpecialtyCatalog;
 import be.envano.petclinic.specialty.SpecialtyCommand;
+import be.envano.petclinic.specialty.internal.jdbc.JdbcSpecialtyRepository;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,12 +20,12 @@ public class SpecialtyCatalogService implements SpecialtyCatalog {
 
     private final Journal journal;
     private final Transaction transaction;
-    private final SpecialtyRepository repository;
+    private final JdbcSpecialtyRepository repository;
 
     public SpecialtyCatalogService(
         Journal journal,
         Transaction transaction,
-        SpecialtyRepository repository
+        JdbcSpecialtyRepository repository
     ) {
         this.transaction = transaction;
         this.repository = repository;

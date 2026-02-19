@@ -1,16 +1,15 @@
-package be.envano.petclinic.specialty.jdbc;
+package be.envano.petclinic.specialty.internal.jdbc;
 
 import be.envano.petclinic.specialty.Specialty;
 import be.envano.petclinic.specialty.SpecialtyCommand;
 import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
-import be.envano.petclinic.specialty.internal.SpecialtyRepository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class JdbcSpecialtyRepository implements SpecialtyRepository {
+public class JdbcSpecialtyRepository {
 
 	private static final JdbcSpecialtyRowMapper ROW_MAPPER = new JdbcSpecialtyRowMapper();
 
@@ -20,7 +19,6 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 		this.jdbcClient = jdbcClient;
 	}
 
-	@Override
 	public Specialty.Id nextId() {
 		String sql = """
 			SELECT nextval('specialty_sequence')
@@ -34,7 +32,6 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 		return new Specialty.Id(value);
 	}
 
-	@Override
 	public Specialty add(SpecialtyAggregate specialty) {
 		Objects.requireNonNull(specialty);
 
@@ -52,7 +49,6 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 		return specialty.toSnapshot();
 	}
 
-	@Override
 	public Specialty update(SpecialtyAggregate specialty) {
 		Objects.requireNonNull(specialty);
 
@@ -86,7 +82,6 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 		return SpecialtyAggregate.load(command).toSnapshot();
 	}
 
-	@Override
 	public Optional<SpecialtyAggregate> findById(Specialty.Id id) {
 		String sql = """
 			SELECT ID, NAME, VERSION
@@ -99,7 +94,6 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 			.optional();
 	}
 
-	@Override
 	public List<Specialty> findAll() {
 		String sql = """
 			SELECT ID, NAME, VERSION

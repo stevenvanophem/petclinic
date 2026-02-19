@@ -4,22 +4,24 @@ import be.envano.petclinic.platform.journal.support.TestJournal;
 import be.envano.petclinic.platform.transaction.support.TestTransaction;
 import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
 import be.envano.petclinic.specialty.internal.SpecialtyCatalogService;
-import be.envano.petclinic.specialty.internal.SpecialtyRepository;
+import be.envano.petclinic.specialty.internal.jdbc.JdbcSpecialtyRepository;
 import be.envano.petclinic.specialty.support.SpecialtyTestFactory;
-import be.envano.petclinic.specialty.support.SpecialtyTestRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class SpecialtyCatalogTest {
 
 	private final TestJournal journal = new TestJournal();
 	private final TestTransaction transaction = new TestTransaction();
-	private final SpecialtyRepository repository = new SpecialtyTestRepository();
+	private final JdbcSpecialtyRepository repository = mock(JdbcSpecialtyRepository.class);
 
     private final SpecialtyCatalog catalog = new SpecialtyCatalogService(
         journal,
@@ -31,6 +33,9 @@ class SpecialtyCatalogTest {
     @DisplayName("I can register a new specialty to the catalog")
     void testRegister() {
         SpecialtyCommand.Register command = new SpecialtyCommand.Register(SpecialtyTestFactory.Surgery.NAME);
+        when(repository.nextId()).thenReturn(Specialty.Id.one());
+        when(repository.add(org.mockito.ArgumentMatchers.any(SpecialtyAggregate.class)))
+            .thenAnswer(invocation -> ((SpecialtyAggregate) invocation.getArgument(0)).toSnapshot());
 
         Specialty result = catalog.register(command);
 
@@ -47,24 +52,32 @@ class SpecialtyCatalogTest {
     @DisplayName("I can rename a specialty")
     void testRename() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
-
-        Specialty stored = repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
+        SpecialtyAggregate stored = SpecialtyAggregate.load(new SpecialtyCommand.Load(
             SpecialtyTestFactory.Surgery.ID,
             SpecialtyTestFactory.Surgery.NAME,
             0
-        )));
+        ));
+        when(repository.findById(SpecialtyTestFactory.Surgery.ID)).thenReturn(Optional.of(stored));
+        when(repository.update(org.mockito.ArgumentMatchers.any(SpecialtyAggregate.class)))
+            .thenAnswer(invocation -> {
+                SpecialtyAggregate aggregate = invocation.getArgument(0);
+                return new Specialty(aggregate.id(), aggregate.name(), aggregate.version() + 1);
+            });
+
+        Specialty loaded = stored.toSnapshot();
 
         final var command = new SpecialtyCommand.Rename(
-            stored.id(),
+            loaded.id(),
             newName,
-            stored.version()
+            loaded.version()
         );
 
         Specialty result = catalog.rename(command);
 
         assertThat(result).isNotNull();
-        assertThat(result.id()).isEqualTo(stored.id());
+        assertThat(result.id()).isEqualTo(loaded.id());
         assertThat(result.name()).isEqualTo(newName);
+        assertThat(result.version()).isEqualTo(1);
         assertThat(transaction.count()).isEqualTo(1);
         assertThat(journal.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
@@ -75,12 +88,12 @@ class SpecialtyCatalogTest {
     @DisplayName("Can't rename when the version mismatches")
     void testRenameMismatch() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
-
-        Specialty stored = repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
+        SpecialtyAggregate stored = SpecialtyAggregate.load(new SpecialtyCommand.Load(
             Specialty.Id.fromLong(1L),
             SpecialtyTestFactory.Surgery.NAME,
             1
-        )));
+        ));
+        when(repository.findById(Specialty.Id.fromLong(1L))).thenReturn(Optional.of(stored));
 
         final var command = new SpecialtyCommand.Rename(
             stored.id(),
@@ -96,21 +109,24 @@ class SpecialtyCatalogTest {
     @Test
     @DisplayName("I can find all specialities")
     void testFindAll() {
-        repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
+        List<Specialty> specialties = List.of(
+            SpecialtyAggregate.load(new SpecialtyCommand.Load(
             SpecialtyTestFactory.Surgery.ID,
             SpecialtyTestFactory.Surgery.NAME,
             0
-        )));
-        repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
+        )).toSnapshot(),
+            SpecialtyAggregate.load(new SpecialtyCommand.Load(
             Specialty.Id.fromLong(3L),
             SpecialtyTestFactory.Dentistry.NAME,
             0
-        )));
-        repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
+        )).toSnapshot(),
+            SpecialtyAggregate.load(new SpecialtyCommand.Load(
             Specialty.Id.fromLong(1L),
             SpecialtyTestFactory.Radiology.NAME,
             0
-        )));
+        )).toSnapshot()
+        );
+        when(repository.findAll()).thenReturn(specialties);
 
         List<Specialty> results = catalog.findAll();
 

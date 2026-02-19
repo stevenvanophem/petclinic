@@ -5,7 +5,7 @@ import be.envano.petclinic.platform.transaction.Transaction;
 import be.envano.petclinic.platform.transaction.springbean.TransactionFactory;
 import be.envano.petclinic.specialty.SpecialtyCatalog;
 import be.envano.petclinic.specialty.internal.SpecialtyCatalogService;
-import be.envano.petclinic.specialty.jdbc.JdbcSpecialtyRepository;
+import be.envano.petclinic.specialty.internal.jdbc.JdbcSpecialtyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
