@@ -3,11 +3,13 @@ package be.envano.petclinic.specialty.internal;
 import be.envano.petclinic.specialty.Specialty;
 import be.envano.petclinic.specialty.SpecialtyCommand;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Repository
 public class SpecialtyRepository {
 
 	private static final SpecialtyRowMapper ROW_MAPPER = new SpecialtyRowMapper();

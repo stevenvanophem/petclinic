@@ -1,7 +1,6 @@
 package be.envano.petclinic.specialty;
 
 import be.envano.petclinic.platform.journal.support.TestJournal;
-import be.envano.petclinic.platform.transaction.support.TestTransaction;
 import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
 import be.envano.petclinic.specialty.internal.SpecialtyInternalService;
 import be.envano.petclinic.specialty.internal.SpecialtyRepository;
@@ -20,12 +19,10 @@ import static org.mockito.Mockito.when;
 class SpecialtyServiceTest {
 
 	private final TestJournal journal = new TestJournal();
-	private final TestTransaction transaction = new TestTransaction();
 	private final SpecialtyRepository repository = mock(SpecialtyRepository.class);
 
     private final SpecialtyService catalog = new SpecialtyInternalService(
         journal,
-		transaction,
         repository
     );
 
@@ -42,7 +39,6 @@ class SpecialtyServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.id()).isEqualTo(Specialty.Id.one());
         assertThat(result.name()).isEqualTo(SpecialtyTestFactory.Surgery.NAME);
-        assertThat(transaction.count()).isEqualTo(1);
         assertThat(journal.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
             .isEqualTo(SpecialtyEvent.Registered.class.getSimpleName());
@@ -78,7 +74,6 @@ class SpecialtyServiceTest {
         assertThat(result.id()).isEqualTo(loaded.id());
         assertThat(result.name()).isEqualTo(newName);
         assertThat(result.version()).isEqualTo(1);
-        assertThat(transaction.count()).isEqualTo(1);
         assertThat(journal.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
             .isEqualTo(SpecialtyEvent.Renamed.class.getSimpleName());
@@ -132,7 +127,6 @@ class SpecialtyServiceTest {
 
         assertThat(results.size()).isEqualTo(3);
         assertThat(journal.events().size()).isEqualTo(0);
-        assertThat(transaction.count()).isEqualTo(0);
     }
 
 }
