@@ -1,4 +1,4 @@
-package be.envano.petclinic.specialty.internal.rest;
+package be.envano.petclinic.specialty.inbound.rest;
 
 import be.envano.petclinic.specialty.Specialty;
 import be.envano.petclinic.specialty.SpecialtyCommand;

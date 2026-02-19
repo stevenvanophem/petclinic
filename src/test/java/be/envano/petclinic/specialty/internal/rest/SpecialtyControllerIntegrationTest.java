@@ -2,6 +2,7 @@ package be.envano.petclinic.specialty.internal.rest;
 
 import be.envano.petclinic.platform.journal.support.TestJournal;
 import be.envano.petclinic.specialty.SpecialtyEvent;
+import be.envano.petclinic.specialty.inbound.RestModel;
 import be.envano.petclinic.specialty.support.SpecialtyTestFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
