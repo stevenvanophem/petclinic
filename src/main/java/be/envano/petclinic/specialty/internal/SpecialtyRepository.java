@@ -1,21 +1,20 @@
-package be.envano.petclinic.specialty.internal.jdbc;
+package be.envano.petclinic.specialty.internal;
 
 import be.envano.petclinic.specialty.Specialty;
 import be.envano.petclinic.specialty.SpecialtyCommand;
-import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class JdbcSpecialtyRepository {
+public class SpecialtyRepository {
 
-	private static final JdbcSpecialtyRowMapper ROW_MAPPER = new JdbcSpecialtyRowMapper();
+	private static final SpecialtyRowMapper ROW_MAPPER = new SpecialtyRowMapper();
 
 	private final JdbcClient jdbcClient;
 
-	public JdbcSpecialtyRepository(JdbcClient jdbcClient) {
+	public SpecialtyRepository(JdbcClient jdbcClient) {
 		this.jdbcClient = jdbcClient;
 	}
 

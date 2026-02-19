@@ -5,7 +5,7 @@ import be.envano.petclinic.platform.transaction.Transaction;
 import be.envano.petclinic.platform.transaction.springbean.TransactionFactory;
 import be.envano.petclinic.specialty.SpecialtyService;
 import be.envano.petclinic.specialty.internal.SpecialtyInternalService;
-import be.envano.petclinic.specialty.internal.jdbc.JdbcSpecialtyRepository;
+import be.envano.petclinic.specialty.internal.SpecialtyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,7 @@ public class SpecialtySpringBeanConfiguration {
         Journal journal
     ) {
         logger.info("Initializing SpecialtyCatalog");
-		final var repository = new JdbcSpecialtyRepository(jdbcClient);
+		final var repository = new SpecialtyRepository(jdbcClient);
 		final Transaction transaction = TransactionFactory.configure(transactionTemplate);
         return new SpecialtyInternalService(journal, transaction, repository);
     }

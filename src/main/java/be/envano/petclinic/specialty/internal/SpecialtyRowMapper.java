@@ -1,15 +1,14 @@
-package be.envano.petclinic.specialty.internal.jdbc;
+package be.envano.petclinic.specialty.internal;
 
 import be.envano.petclinic.specialty.Specialty;
 import be.envano.petclinic.specialty.SpecialtyCommand;
-import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.lang.NonNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-class JdbcSpecialtyRowMapper implements RowMapper<SpecialtyAggregate> {
+class SpecialtyRowMapper implements RowMapper<SpecialtyAggregate> {
 
 	@Override
 	public SpecialtyAggregate mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {

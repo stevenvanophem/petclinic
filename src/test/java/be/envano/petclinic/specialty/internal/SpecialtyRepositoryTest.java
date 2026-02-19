@@ -1,8 +1,7 @@
-package be.envano.petclinic.specialty.internal.jdbc;
+package be.envano.petclinic.specialty.internal;
 
 import be.envano.petclinic.specialty.Specialty;
 import be.envano.petclinic.specialty.SpecialtyCommand;
-import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
 import be.envano.petclinic.specialty.support.SpecialtyTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,8 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ImportAutoConfiguration(FlywayAutoConfiguration.class)
-@Import(JdbcSpecialtyRepository.class)
-class JdbcSpecialtyRepositoryTest {
+@Import(SpecialtyRepository.class)
+class SpecialtyRepositoryTest {
 
 	@Container
 	@ServiceConnection
@@ -37,7 +36,7 @@ class JdbcSpecialtyRepositoryTest {
 		.withPassword("test");
 
 	@Autowired
-	private JdbcSpecialtyRepository repository;
+	private SpecialtyRepository repository;
 
 	@Test
 	@DisplayName("Calling nextId should increment the sequence")
