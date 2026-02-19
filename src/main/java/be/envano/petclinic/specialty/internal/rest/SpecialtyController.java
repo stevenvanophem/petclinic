@@ -1,8 +1,8 @@
 package be.envano.petclinic.specialty.internal.rest;
 
 import be.envano.petclinic.specialty.Specialty;
-import be.envano.petclinic.specialty.SpecialtyCatalog;
 import be.envano.petclinic.specialty.SpecialtyCommand;
+import be.envano.petclinic.specialty.SpecialtyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,9 +20,9 @@ import java.util.Objects;
 @RequestMapping(value = "/specialties")
 class SpecialtyController {
 
-    private final SpecialtyCatalog catalog;
+    private final SpecialtyService catalog;
 
-    SpecialtyController(SpecialtyCatalog catalog) {
+    SpecialtyController(SpecialtyService catalog) {
         this.catalog = catalog;
     }
 

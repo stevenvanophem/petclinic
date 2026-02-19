@@ -3,8 +3,8 @@ package be.envano.petclinic.specialty.internal;
 import be.envano.petclinic.platform.journal.Journal;
 import be.envano.petclinic.platform.transaction.Transaction;
 import be.envano.petclinic.specialty.Specialty;
-import be.envano.petclinic.specialty.SpecialtyCatalog;
 import be.envano.petclinic.specialty.SpecialtyCommand;
+import be.envano.petclinic.specialty.SpecialtyService;
 import be.envano.petclinic.specialty.internal.jdbc.JdbcSpecialtyRepository;
 
 import java.util.List;
@@ -14,15 +14,15 @@ import static java.lang.System.Logger;
 import static java.lang.System.Logger.Level;
 import static java.lang.System.getLogger;
 
-public class SpecialtyCatalogService implements SpecialtyCatalog {
+public class SpecialtyInternalService implements SpecialtyService {
 
-    private static final Logger LOGGER = getLogger(SpecialtyCatalogService.class.getName());
+    private static final Logger LOGGER = getLogger(SpecialtyInternalService.class.getName());
 
     private final Journal journal;
     private final Transaction transaction;
     private final JdbcSpecialtyRepository repository;
 
-    public SpecialtyCatalogService(
+    public SpecialtyInternalService(
         Journal journal,
         Transaction transaction,
         JdbcSpecialtyRepository repository

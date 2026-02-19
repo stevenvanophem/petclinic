@@ -3,7 +3,7 @@ package be.envano.petclinic.specialty;
 import be.envano.petclinic.platform.journal.support.TestJournal;
 import be.envano.petclinic.platform.transaction.support.TestTransaction;
 import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
-import be.envano.petclinic.specialty.internal.SpecialtyCatalogService;
+import be.envano.petclinic.specialty.internal.SpecialtyInternalService;
 import be.envano.petclinic.specialty.internal.jdbc.JdbcSpecialtyRepository;
 import be.envano.petclinic.specialty.support.SpecialtyTestFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -17,13 +17,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class SpecialtyCatalogTest {
+class SpecialtyServiceTest {
 
 	private final TestJournal journal = new TestJournal();
 	private final TestTransaction transaction = new TestTransaction();
 	private final JdbcSpecialtyRepository repository = mock(JdbcSpecialtyRepository.class);
 
-    private final SpecialtyCatalog catalog = new SpecialtyCatalogService(
+    private final SpecialtyService catalog = new SpecialtyInternalService(
         journal,
 		transaction,
         repository

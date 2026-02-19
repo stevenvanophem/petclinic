@@ -2,7 +2,7 @@ package be.envano.petclinic.specialty;
 
 import java.util.List;
 
-public interface SpecialtyCatalog {
+public interface SpecialtyService {
 
     Specialty register(SpecialtyCommand.Register command);
 
