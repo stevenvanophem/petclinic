@@ -1,10 +1,9 @@
-package be.envano.petclinic.core.json.springbean;
+package be.envano.petclinic.platform.json.springbean;
 
+import be.envano.petclinic.platform.json.JsonCodec;
+import be.envano.petclinic.platform.json.jackson.JacksonJsonCodec;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import be.envano.petclinic.core.json.JsonCodec;
-import be.envano.petclinic.core.json.jackson.JacksonJsonCodec;
 
 @Configuration
 public class JacksonCodecSpringConfiguration {

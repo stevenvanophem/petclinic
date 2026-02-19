@@ -1,4 +1,4 @@
-package be.envano.petclinic.core.transaction;
+package be.envano.petclinic.platform.transaction;
 
 import java.util.function.Supplier;
 

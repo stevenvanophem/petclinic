@@ -1,14 +1,13 @@
-package be.envano.petclinic.core.journal.springbean;
+package be.envano.petclinic.platform.journal.springbean;
 
-import java.util.Objects;
-
+import be.envano.petclinic.platform.journal.Journal;
+import be.envano.petclinic.platform.journal.jdbc.JdbcJournal;
+import be.envano.petclinic.platform.json.JsonCodec;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
-import be.envano.petclinic.core.json.JsonCodec;
-import be.envano.petclinic.core.journal.Journal;
-import be.envano.petclinic.core.journal.jdbc.JdbcJournal;
+import java.util.Objects;
 
 @Configuration
 public class JournalSpringConfiguration {

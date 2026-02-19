@@ -1,9 +1,8 @@
-package be.envano.petclinic.core.json.jackson;
+package be.envano.petclinic.platform.json.jackson;
 
+import be.envano.petclinic.platform.json.JsonCodec;
+import be.envano.petclinic.platform.json.JsonCodecException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import be.envano.petclinic.core.json.JsonCodecException;
-import be.envano.petclinic.core.json.JsonCodec;
 
 public class JacksonJsonCodec implements JsonCodec {
 

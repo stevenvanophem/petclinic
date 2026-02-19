@@ -1,4 +1,4 @@
-package be.envano.petclinic.core.json;
+package be.envano.petclinic.platform.json;
 
 public class JsonCodecException extends RuntimeException {
 

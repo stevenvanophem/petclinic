@@ -1,4 +1,4 @@
-package be.envano.petclinic.core.journal;
+package be.envano.petclinic.platform.journal;
 
 public interface Journal {
 

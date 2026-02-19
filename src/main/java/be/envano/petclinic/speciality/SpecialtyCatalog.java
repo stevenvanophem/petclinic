@@ -1,8 +1,8 @@
 package be.envano.petclinic.speciality;
 
 
-import be.envano.petclinic.core.journal.Journal;
-import be.envano.petclinic.core.transaction.Transaction;
+import be.envano.petclinic.platform.journal.Journal;
+import be.envano.petclinic.platform.transaction.Transaction;
 
 import java.util.List;
 import java.util.Objects;

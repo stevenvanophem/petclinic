@@ -1,6 +1,6 @@
-package be.envano.petclinic.core.transaction.springbean;
+package be.envano.petclinic.platform.transaction.springbean;
 
-import be.envano.petclinic.core.transaction.Transaction;
+import be.envano.petclinic.platform.transaction.Transaction;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.function.Supplier;

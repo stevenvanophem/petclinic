@@ -1,15 +1,13 @@
 package be.envano.petclinic.speciality.jdbc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-
+import be.envano.petclinic.speciality.Specialty;
+import be.envano.petclinic.speciality.SpecialtyCommand;
+import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.jdbc.test.autoconfigure.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -17,9 +15,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import be.envano.petclinic.speciality.Specialty;
-import be.envano.petclinic.speciality.SpecialtyCommand;
-import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
 @Testcontainers
@@ -28,7 +26,7 @@ import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
 class JdbcSpecialtyRepositoryTest {
 
 	@Container
-	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17.6")
+	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:18.2")
 		.withDatabaseName("testdb")
 		.withUsername("test")
 		.withPassword("test");

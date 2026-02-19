@@ -1,6 +1,6 @@
-package be.envano.petclinic.core.transaction.support;
+package be.envano.petclinic.platform.transaction.support;
 
-import be.envano.petclinic.core.transaction.Transaction;
+import be.envano.petclinic.platform.transaction.Transaction;
 
 import java.util.function.Supplier;
 

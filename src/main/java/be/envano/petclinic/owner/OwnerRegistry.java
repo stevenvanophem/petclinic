@@ -1,6 +1,6 @@
 package be.envano.petclinic.owner;
 
-import be.envano.petclinic.core.transaction.Transaction;
+import be.envano.petclinic.platform.transaction.Transaction;
 
 import java.util.Objects;
 

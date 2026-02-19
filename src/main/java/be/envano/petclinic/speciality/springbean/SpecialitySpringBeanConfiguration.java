@@ -1,11 +1,10 @@
 package be.envano.petclinic.speciality.springbean;
 
-import be.envano.petclinic.core.journal.Journal;
-import be.envano.petclinic.core.transaction.Transaction;
-import be.envano.petclinic.core.transaction.springbean.TransactionFactory;
+import be.envano.petclinic.platform.journal.Journal;
+import be.envano.petclinic.platform.transaction.Transaction;
+import be.envano.petclinic.platform.transaction.springbean.TransactionFactory;
 import be.envano.petclinic.speciality.SpecialtyCatalog;
 import be.envano.petclinic.speciality.jdbc.JdbcSpecialtyRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;

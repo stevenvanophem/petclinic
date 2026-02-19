@@ -1,10 +1,10 @@
-package be.envano.petclinic.core.journal.support;
+package be.envano.petclinic.platform.journal.support;
+
+import be.envano.petclinic.platform.journal.Journal;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import be.envano.petclinic.core.journal.Journal;
 
 public class TestJournal implements Journal {
 

@@ -1,14 +1,13 @@
-package be.envano.petclinic.core.journal.jdbc;
+package be.envano.petclinic.platform.journal.jdbc;
 
-import java.time.Instant;
-import java.util.Objects;
-
+import be.envano.petclinic.platform.journal.Journal;
+import be.envano.petclinic.platform.json.JsonCodec;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
-import be.envano.petclinic.core.journal.Journal;
-import be.envano.petclinic.core.json.JsonCodec;
+import java.time.Instant;
+import java.util.Objects;
 
 public class JdbcJournal implements Journal {
 

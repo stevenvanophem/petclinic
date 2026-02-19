@@ -1,7 +1,7 @@
 package be.envano.petclinic.speciality;
 
-import be.envano.petclinic.core.journal.support.TestJournal;
-import be.envano.petclinic.core.transaction.support.TestTransaction;
+import be.envano.petclinic.platform.journal.support.TestJournal;
+import be.envano.petclinic.platform.transaction.support.TestTransaction;
 import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
 import be.envano.petclinic.speciality.support.SpecialtyTestRepository;
 import org.junit.jupiter.api.DisplayName;
