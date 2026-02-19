@@ -1,6 +1,6 @@
 package be.envano.petclinic.vet;
 
-import be.envano.petclinic.speciality.Specialty;
+import be.envano.petclinic.specialty.Specialty;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
-package be.envano.petclinic.speciality.support;
+package be.envano.petclinic.specialty.support;
 
-import be.envano.petclinic.speciality.Specialty;
-import be.envano.petclinic.speciality.SpecialtyCommand;
+import be.envano.petclinic.specialty.Specialty;
+import be.envano.petclinic.specialty.SpecialtyCommand;
 
 public class SpecialtyTestFactory {
 
@@ -17,7 +17,7 @@ public class SpecialtyTestFactory {
 		}
 
 		public static Specialty load() {
-			return Specialty.load(new SpecialtyCommand.Load(Specialty.Id.fromLong(1L), NAME, 0));
+			return new Specialty(Specialty.Id.fromLong(1L), NAME, 0);
 		}
 
 	}
@@ -32,7 +32,7 @@ public class SpecialtyTestFactory {
 		}
 
 		public static Specialty load() {
-			return Specialty.load(new SpecialtyCommand.Load(ID, NAME, 0));
+			return new Specialty(ID, NAME, 0);
 		}
 
 	}
@@ -46,7 +46,7 @@ public class SpecialtyTestFactory {
 		}
 
 		public static Specialty load() {
-			return Specialty.load(new SpecialtyCommand.Load(Specialty.Id.fromLong(3L), NAME, 0));
+			return new Specialty(Specialty.Id.fromLong(3L), NAME, 0);
 		}
 
 	}

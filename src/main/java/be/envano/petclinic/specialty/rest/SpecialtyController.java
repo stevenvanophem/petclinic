@@ -1,8 +1,8 @@
-package be.envano.petclinic.speciality.rest;
+package be.envano.petclinic.specialty.rest;
 
-import be.envano.petclinic.speciality.Specialty;
-import be.envano.petclinic.speciality.SpecialtyCatalog;
-import be.envano.petclinic.speciality.SpecialtyCommand;
+import be.envano.petclinic.specialty.Specialty;
+import be.envano.petclinic.specialty.SpecialtyCatalog;
+import be.envano.petclinic.specialty.SpecialtyCommand;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,8 +1,10 @@
-package be.envano.petclinic.speciality;
-
+package be.envano.petclinic.specialty.internal;
 
 import be.envano.petclinic.platform.journal.Journal;
 import be.envano.petclinic.platform.transaction.Transaction;
+import be.envano.petclinic.specialty.Specialty;
+import be.envano.petclinic.specialty.SpecialtyCatalog;
+import be.envano.petclinic.specialty.SpecialtyCommand;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,24 +13,25 @@ import static java.lang.System.Logger;
 import static java.lang.System.Logger.Level;
 import static java.lang.System.getLogger;
 
-public class SpecialtyCatalog {
+public class SpecialtyCatalogService implements SpecialtyCatalog {
 
-    private static final Logger LOGGER = getLogger(SpecialtyCatalog.class.getName());
+    private static final Logger LOGGER = getLogger(SpecialtyCatalogService.class.getName());
 
-	private final Journal journal;
-	private final Transaction transaction;
-	private final SpecialtyRepository repository;
+    private final Journal journal;
+    private final Transaction transaction;
+    private final SpecialtyRepository repository;
 
-    public SpecialtyCatalog(
-		Journal journal,
+    public SpecialtyCatalogService(
+        Journal journal,
         Transaction transaction,
         SpecialtyRepository repository
     ) {
         this.transaction = transaction;
-		this.repository = repository;
-		this.journal = journal;
-	}
+        this.repository = repository;
+        this.journal = journal;
+    }
 
+    @Override
     public Specialty register(SpecialtyCommand.Register command) {
         Objects.requireNonNull(command);
 
@@ -36,13 +39,14 @@ public class SpecialtyCatalog {
         LOGGER.log(Level.TRACE, command::toString);
 
         return transaction.in(() -> {
-			Specialty.Id id = repository.nextId();
-			Specialty specialty = new Specialty(id, command);
+            Specialty.Id id = repository.nextId();
+            SpecialtyAggregate specialty = SpecialtyAggregate.register(id, command);
             specialty.events().forEach(journal::appendEvent);
             return repository.add(specialty);
         });
     }
 
+    @Override
     public Specialty rename(SpecialtyCommand.Rename command) {
         Objects.requireNonNull(command);
 
@@ -50,15 +54,16 @@ public class SpecialtyCatalog {
         LOGGER.log(Level.TRACE, command::toString);
 
         return transaction.in(() -> {
-            Specialty specialty = repository.findById(command.id()).orElseThrow();
+            SpecialtyAggregate specialty = repository.findById(command.id()).orElseThrow();
             specialty.rename(command);
             specialty.events().forEach(journal::appendEvent);
             return repository.update(specialty);
         });
     }
 
+    @Override
     public List<Specialty> findAll() {
-		LOGGER.log(Level.DEBUG, "Find all specialties");
+        LOGGER.log(Level.DEBUG, "Find all specialties");
 
         return repository.findAll();
     }

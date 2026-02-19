@@ -1,4 +1,4 @@
-package be.envano.petclinic.speciality;
+package be.envano.petclinic.specialty;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

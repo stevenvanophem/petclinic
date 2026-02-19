@@ -1,8 +1,8 @@
-package be.envano.petclinic.speciality.rest;
+package be.envano.petclinic.specialty.rest;
 
 import be.envano.petclinic.platform.journal.support.TestJournal;
-import be.envano.petclinic.speciality.SpecialtyEvent;
-import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
+import be.envano.petclinic.specialty.SpecialtyEvent;
+import be.envano.petclinic.specialty.support.SpecialtyTestFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

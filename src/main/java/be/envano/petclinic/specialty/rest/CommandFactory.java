@@ -1,7 +1,7 @@
-package be.envano.petclinic.speciality.rest;
+package be.envano.petclinic.specialty.rest;
 
-import be.envano.petclinic.speciality.Specialty;
-import be.envano.petclinic.speciality.SpecialtyCommand;
+import be.envano.petclinic.specialty.Specialty;
+import be.envano.petclinic.specialty.SpecialtyCommand;
 
 final class CommandFactory {
 

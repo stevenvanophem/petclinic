@@ -1,6 +1,6 @@
-package be.envano.petclinic.speciality.rest;
+package be.envano.petclinic.specialty.rest;
 
-import be.envano.petclinic.speciality.Specialty;
+import be.envano.petclinic.specialty.Specialty;
 
 final class ResponseFactory {
 

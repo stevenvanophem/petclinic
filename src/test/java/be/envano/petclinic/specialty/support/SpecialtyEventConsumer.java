@@ -1,6 +1,6 @@
-package be.envano.petclinic.speciality.support;
+package be.envano.petclinic.specialty.support;
 
-import be.envano.petclinic.speciality.SpecialtyEvent;
+import be.envano.petclinic.specialty.SpecialtyEvent;
 import org.springframework.context.event.EventListener;
 
 import java.util.ArrayList;

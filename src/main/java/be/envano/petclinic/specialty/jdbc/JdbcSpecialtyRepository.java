@@ -1,14 +1,14 @@
-package be.envano.petclinic.speciality.jdbc;
+package be.envano.petclinic.specialty.jdbc;
+
+import be.envano.petclinic.specialty.Specialty;
+import be.envano.petclinic.specialty.SpecialtyCommand;
+import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
+import be.envano.petclinic.specialty.internal.SpecialtyRepository;
+import org.springframework.jdbc.core.simple.JdbcClient;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import org.springframework.jdbc.core.simple.JdbcClient;
-
-import be.envano.petclinic.speciality.Specialty;
-import be.envano.petclinic.speciality.SpecialtyCommand;
-import be.envano.petclinic.speciality.SpecialtyRepository;
 
 public class JdbcSpecialtyRepository implements SpecialtyRepository {
 
@@ -35,7 +35,7 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 	}
 
 	@Override
-	public Specialty add(Specialty specialty) {
+	public Specialty add(SpecialtyAggregate specialty) {
 		Objects.requireNonNull(specialty);
 
 		String sql = """
@@ -49,11 +49,11 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 			.param("version", specialty.version())
 			.update();
 
-		return specialty;
+		return specialty.toSnapshot();
 	}
 
 	@Override
-	public Specialty update(Specialty specialty) {
+	public Specialty update(SpecialtyAggregate specialty) {
 		Objects.requireNonNull(specialty);
 
 		final var id = specialty.id();
@@ -83,11 +83,11 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 			newVersion
 		);
 
-		return Specialty.load(command);
+		return SpecialtyAggregate.load(command).toSnapshot();
 	}
 
 	@Override
-	public Optional<Specialty> findById(Specialty.Id id) {
+	public Optional<SpecialtyAggregate> findById(Specialty.Id id) {
 		String sql = """
 			SELECT ID, NAME, VERSION
 			FROM specialty
@@ -109,7 +109,10 @@ public class JdbcSpecialtyRepository implements SpecialtyRepository {
 
 		return jdbcClient.sql(sql)
 			.query(ROW_MAPPER)
-			.list();
+			.list()
+			.stream()
+			.map(SpecialtyAggregate::toSnapshot)
+			.toList();
 	}
 
 }

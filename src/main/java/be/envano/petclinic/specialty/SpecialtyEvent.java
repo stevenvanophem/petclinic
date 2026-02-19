@@ -1,4 +1,4 @@
-package be.envano.petclinic.speciality;
+package be.envano.petclinic.specialty;
 
 import java.util.Objects;
 

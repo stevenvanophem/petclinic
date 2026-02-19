@@ -1,4 +1,4 @@
-package be.envano.petclinic.speciality.rest;
+package be.envano.petclinic.specialty.rest;
 
 interface RestModel {
 

@@ -1,9 +1,12 @@
-package be.envano.petclinic.speciality;
+package be.envano.petclinic.specialty;
 
 import be.envano.petclinic.platform.journal.support.TestJournal;
 import be.envano.petclinic.platform.transaction.support.TestTransaction;
-import be.envano.petclinic.speciality.support.SpecialtyTestFactory;
-import be.envano.petclinic.speciality.support.SpecialtyTestRepository;
+import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
+import be.envano.petclinic.specialty.internal.SpecialtyCatalogService;
+import be.envano.petclinic.specialty.internal.SpecialtyRepository;
+import be.envano.petclinic.specialty.support.SpecialtyTestFactory;
+import be.envano.petclinic.specialty.support.SpecialtyTestRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +21,7 @@ class SpecialtyCatalogTest {
 	private final TestTransaction transaction = new TestTransaction();
 	private final SpecialtyRepository repository = new SpecialtyTestRepository();
 
-    private final SpecialtyCatalog catalog = new SpecialtyCatalog(
+    private final SpecialtyCatalog catalog = new SpecialtyCatalogService(
         journal,
 		transaction,
         repository
@@ -45,7 +48,11 @@ class SpecialtyCatalogTest {
     void testRename() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
 
-        Specialty stored = repository.add(SpecialtyTestFactory.Surgery.load());
+        Specialty stored = repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
+            SpecialtyTestFactory.Surgery.ID,
+            SpecialtyTestFactory.Surgery.NAME,
+            0
+        )));
 
         final var command = new SpecialtyCommand.Rename(
             stored.id(),
@@ -69,7 +76,7 @@ class SpecialtyCatalogTest {
     void testRenameMismatch() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
 
-        Specialty stored = repository.add(Specialty.load(new SpecialtyCommand.Load(
+        Specialty stored = repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
             Specialty.Id.fromLong(1L),
             SpecialtyTestFactory.Surgery.NAME,
             1
@@ -89,9 +96,21 @@ class SpecialtyCatalogTest {
     @Test
     @DisplayName("I can find all specialities")
     void testFindAll() {
-        repository.add(SpecialtyTestFactory.Surgery.load());
-        repository.add(SpecialtyTestFactory.Dentistry.load());
-        repository.add(SpecialtyTestFactory.Radiology.load());
+        repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
+            SpecialtyTestFactory.Surgery.ID,
+            SpecialtyTestFactory.Surgery.NAME,
+            0
+        )));
+        repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
+            Specialty.Id.fromLong(3L),
+            SpecialtyTestFactory.Dentistry.NAME,
+            0
+        )));
+        repository.add(SpecialtyAggregate.load(new SpecialtyCommand.Load(
+            Specialty.Id.fromLong(1L),
+            SpecialtyTestFactory.Radiology.NAME,
+            0
+        )));
 
         List<Specialty> results = catalog.findAll();
 
