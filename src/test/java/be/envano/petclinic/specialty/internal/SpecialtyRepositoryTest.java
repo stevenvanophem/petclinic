@@ -2,7 +2,7 @@ package be.envano.petclinic.specialty.internal;
 
 import be.envano.petclinic.specialty.Specialty;
 import be.envano.petclinic.specialty.SpecialtyCommand;
-import be.envano.petclinic.specialty.support.SpecialtyTestFactory;
+import be.envano.petclinic.specialty.SpecialtyTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

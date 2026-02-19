@@ -4,7 +4,6 @@ import be.envano.petclinic.platform.journal.support.TestJournal;
 import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
 import be.envano.petclinic.specialty.internal.SpecialtyInternalService;
 import be.envano.petclinic.specialty.internal.SpecialtyRepository;
-import be.envano.petclinic.specialty.support.SpecialtyTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
