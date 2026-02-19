@@ -1,4 +1,4 @@
-package be.envano.petclinic.specialty.springbean;
+package be.envano.petclinic.specialty.internal.springbean;
 
 import be.envano.petclinic.platform.journal.Journal;
 import be.envano.petclinic.platform.transaction.Transaction;
