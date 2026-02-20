@@ -20,10 +20,10 @@ import java.util.Objects;
 @RequestMapping(value = "/specialties")
 class SpecialtyRestController {
 
-    private final SpecialtyService catalog;
+    private final SpecialtyService service;
 
-    SpecialtyRestController(SpecialtyService catalog) {
-        this.catalog = catalog;
+    SpecialtyRestController(SpecialtyService service) {
+        this.service = service;
     }
 
     @PostMapping
@@ -32,7 +32,7 @@ class SpecialtyRestController {
         Objects.requireNonNull(request);
 
         SpecialtyCommand.Register command = SpecialtyCommandFactory.create(request);
-        Specialty specialty = catalog.register(command);
+        Specialty specialty = service.register(command);
         return SpecialtyResponseFactory.create(specialty);
     }
 
@@ -44,13 +44,13 @@ class SpecialtyRestController {
         Objects.requireNonNull(request);
 
         SpecialtyCommand.Rename command = SpecialtyCommandFactory.create(request, id);
-        Specialty specialty = catalog.rename(command);
+        Specialty specialty = service.rename(command);
         return SpecialtyResponseFactory.create(specialty);
     }
 
     @GetMapping
     List<SpecialtyRestModel.Response> findAll() {
-        return catalog.findAll().stream()
+        return service.findAll().stream()
             .map(SpecialtyResponseFactory::create)
             .toList();
     }
