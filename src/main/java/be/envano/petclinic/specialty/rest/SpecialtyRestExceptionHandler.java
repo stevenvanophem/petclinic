@@ -12,8 +12,7 @@ import java.net.URI;
 class SpecialtyRestExceptionHandler {
 
     @ExceptionHandler({
-        IllegalArgumentException.class,
-        NullPointerException.class
+        IllegalArgumentException.class
     })
     ProblemDetail handleValidation(Exception exception) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());

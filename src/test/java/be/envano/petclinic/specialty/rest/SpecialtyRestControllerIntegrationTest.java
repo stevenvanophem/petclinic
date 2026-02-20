@@ -14,6 +14,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -181,6 +182,19 @@ class SpecialtyRestControllerIntegrationTest {
         ProblemDetail body = response.getBody();
         assertThat(body).isNotNull();
         assertThat(body.getType().toString()).isEqualTo("urn:petclinic:specialty:duplicate-name");
+    }
+
+    @Test
+    @DisplayName("I get bad request when request payload is explicit JSON null")
+    void testRegisterJsonNullBody() {
+        ResponseEntity<ProblemDetail> response = RestClient.create("http://localhost:" + port)
+            .post()
+            .uri("/specialties")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body("null")
+            .exchange((_, res) -> ResponseEntity.status(res.getStatusCode()).body(res.bodyTo(ProblemDetail.class)));
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(400));
     }
 
     private static SpecialtyTableRecord createTableRecord(ResultSet rs) throws SQLException {
