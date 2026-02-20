@@ -1,6 +1,5 @@
 package be.envano.petclinic.specialty;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -35,20 +34,19 @@ class SpecialtyRepository {
     Specialty add(Specialty specialty) {
         Objects.requireNonNull(specialty);
 
+        if (existsByName(specialty.name()))
+            throw new SpecialtyException.DuplicateName();
+
         String sql = """
             INSERT INTO specialty (ID, NAME, VERSION)
             VALUES (:id, :name, :version)
             """;
 
-        try {
-            jdbcClient.sql(sql)
-                .param("id", specialty.id().toLong())
-                .param("name", specialty.name().toString())
-                .param("version", specialty.version())
-                .update();
-        } catch (DataIntegrityViolationException exception) {
-            throw new SpecialtyException.DuplicateName();
-        }
+        jdbcClient.sql(sql)
+            .param("id", specialty.id().toLong())
+            .param("name", specialty.name().toString())
+            .param("version", specialty.version())
+            .update();
 
         return specialty;
     }
@@ -84,6 +82,21 @@ class SpecialtyRepository {
         );
 
         return new Specialty(command);
+    }
+
+    private boolean existsByName(Specialty.Name name) {
+        String sql = """
+            SELECT EXISTS(
+                SELECT 1
+                FROM specialty
+                WHERE NAME = :name
+            )
+            """;
+
+        return jdbcClient.sql(sql)
+            .param("name", name.toString())
+            .query(Boolean.class)
+            .single();
     }
 
     Optional<Specialty> findById(Specialty.Id id) {
