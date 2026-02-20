@@ -7,14 +7,14 @@ import java.util.Objects;
 
 public interface VetCommand {
 
-    record Load(
+    record Rehydrate(
         Vet.Id id,
         Vet.Name name,
         List<Specialty.Id> specialties,
         int version
     ) {
 
-        public Load {
+        public Rehydrate {
             Objects.requireNonNull(id);
             Objects.requireNonNull(name);
             Objects.requireNonNull(specialties);
@@ -51,14 +51,14 @@ public interface VetCommand {
 
     record Specialize(
         Vet.Id id,
-        List<Specialty.Id> specialities,
+        List<Specialty.Id> specialties,
         int version
     ) {
 
         public Specialize {
             Objects.requireNonNull(id);
-            Objects.requireNonNull(specialities);
-            specialities = List.copyOf(specialities);
+            Objects.requireNonNull(specialties);
+            specialties = List.copyOf(specialties);
         }
 
     }
@@ -78,12 +78,11 @@ public interface VetCommand {
 
     record Fire(
         Vet.Id id,
-        Vet.Name name
+        int version
     ) {
 
         public Fire {
             Objects.requireNonNull(id);
-            Objects.requireNonNull(name);
         }
 
     }

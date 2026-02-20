@@ -4,8 +4,24 @@ public interface VetException {
 
     class NotFound extends RuntimeException {
 
-        public NotFound(Vet.Id id) {
-            super("vet with id " + id + " not found");
+        public NotFound() {
+            super("Vet was not found");
+        }
+
+    }
+
+    class VersionConflict extends RuntimeException {
+
+        public VersionConflict() {
+            super("Vet version does not match current state");
+        }
+
+    }
+
+    class DuplicateName extends RuntimeException {
+
+        public DuplicateName() {
+            super("Vet name already exists");
         }
 
     }

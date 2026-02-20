@@ -10,12 +10,12 @@ public class Vet {
 
     private final List<VetEvent> events = new ArrayList<>();
 
-    private Id id;
+    private final Id id;
     private Name name;
     private List<Specialty.Id> specialties;
-    private int version;
+    private final int version;
 
-    public Vet(VetCommand.Load command) {
+    Vet(VetCommand.Rehydrate command) {
         Objects.requireNonNull(command);
         this.id = command.id();
         this.name = command.name();
@@ -23,14 +23,17 @@ public class Vet {
         this.specialties = List.copyOf(command.specialties());
     }
 
-    public Vet(VetCommand.Hire command) {
+    Vet(Id id, VetCommand.Hire command) {
+        Objects.requireNonNull(id);
         Objects.requireNonNull(command);
+        this.id = id;
         this.name = command.name();
         this.specialties = List.copyOf(command.specialties());
+        this.version = 0;
         this.events.add(new VetEvent.Hired(this));
     }
 
-    public void rename(VetCommand.Rename command) {
+    void rename(VetCommand.Rename command) {
         Objects.requireNonNull(command);
 
         Name originalName = this.name;
@@ -38,32 +41,32 @@ public class Vet {
         if (this.name.equals(command.name()))
             throw new IllegalArgumentException("Name cannot be the same");
         if (this.version != command.version())
-            throw new IllegalArgumentException("Vet versions must be the same");
+            throw new VetException.VersionConflict();
 
         this.name = command.name();
         this.events.add(new VetEvent.Renamed(this, originalName));
     }
 
-    public void specialize(VetCommand.Specialize command) {
+    void specialize(VetCommand.Specialize command) {
         Objects.requireNonNull(command);
 
         List<Specialty.Id> original = this.specialties;
 
         for (Specialty.Id specialty : this.specialties) {
-            if (command.specialities().contains(specialty))
+            if (command.specialties().contains(specialty))
                 throw new IllegalArgumentException("Specialty cannot be the same");
         }
         if (this.version != command.version())
-            throw new IllegalArgumentException("Vet versions must be the same");
+            throw new VetException.VersionConflict();
 
         List<Specialty.Id> newSpecialties = new ArrayList<>(this.specialties);
-        newSpecialties.addAll(command.specialities());
+        newSpecialties.addAll(command.specialties());
 
         this.specialties = List.copyOf(newSpecialties);
         this.events.add(new VetEvent.Specialized(this, original));
     }
 
-    public void deSpecialize(VetCommand.DeSpecialize command) {
+    void deSpecialize(VetCommand.DeSpecialize command) {
         Objects.requireNonNull(command);
 
         Specialty.Id specialityToRemove = command.speciality();
@@ -71,13 +74,22 @@ public class Vet {
         if (!this.specialties.contains(specialityToRemove))
             throw new IllegalArgumentException("Specialty does not exist");
         if (this.version != command.version())
-            throw new IllegalArgumentException("Vet versions must be the same");
+            throw new VetException.VersionConflict();
 
         List<Specialty.Id> specialties = new ArrayList<>(this.specialties);
         specialties.remove(specialityToRemove);
 
         this.specialties = List.copyOf(specialties);
         this.events.add(new VetEvent.DeSpecialized(this, specialityToRemove));
+    }
+
+    void fire(VetCommand.Fire command) {
+        Objects.requireNonNull(command);
+
+        if (this.version != command.version())
+            throw new VetException.VersionConflict();
+
+        this.events.add(new VetEvent.Fired(this.id));
     }
 
     public Id id() {
@@ -96,8 +108,8 @@ public class Vet {
         return specialties;
     }
 
-    public List<VetEvent> events() {
-        return events;
+    List<VetEvent> events() {
+        return List.copyOf(events);
     }
 
     public record Id(long value) {
