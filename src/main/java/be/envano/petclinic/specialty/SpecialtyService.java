@@ -45,7 +45,7 @@ public class SpecialtyService {
         logger.debug("Renaming specialty");
         logger.trace("{}", command);
 
-        Specialty specialty = repository.findById(command.id()).orElseThrow();
+        Specialty specialty = repository.findById(command.id()).orElseThrow(SpecialtyException.NotFound::new);
         specialty.rename(command);
         specialty.events().forEach(journal::appendEvent);
         return repository.update(specialty);

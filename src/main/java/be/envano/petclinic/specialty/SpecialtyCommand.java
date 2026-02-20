@@ -34,6 +34,7 @@ public interface SpecialtyCommand {
     ) {
 
         public Rename {
+            Objects.requireNonNull(id, "id missing");
             Objects.requireNonNull(name, "name missing");
         }
 

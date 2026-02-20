@@ -35,7 +35,7 @@ public class Specialty {
         Name originalName = this.name;
 
         if (this.version != command.version())
-            throw new IllegalStateException("specialty versions do not match");
+            throw new SpecialtyException.VersionConflict();
 
         this.name = command.name();
         this.events.add(new SpecialtyEvent.Renamed(this, originalName));

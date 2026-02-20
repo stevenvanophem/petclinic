@@ -1,5 +1,6 @@
 package be.envano.petclinic.specialty;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -39,11 +40,15 @@ class SpecialtyRepository {
             VALUES (:id, :name, :version)
             """;
 
-        jdbcClient.sql(sql)
-            .param("id", specialty.id().toLong())
-            .param("name", specialty.name().toString())
-            .param("version", specialty.version())
-            .update();
+        try {
+            jdbcClient.sql(sql)
+                .param("id", specialty.id().toLong())
+                .param("name", specialty.name().toString())
+                .param("version", specialty.version())
+                .update();
+        } catch (DataIntegrityViolationException exception) {
+            throw new SpecialtyException.DuplicateName();
+        }
 
         return specialty;
     }
@@ -70,7 +75,7 @@ class SpecialtyRepository {
             .update();
 
         if (rows == 0)
-            throw new IllegalStateException("Specialty was modified concurrently or does not exist");
+            throw new SpecialtyException.VersionConflict();
 
         var command = new SpecialtyCommand.Rehydrate(
             id,

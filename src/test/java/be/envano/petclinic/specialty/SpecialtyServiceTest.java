@@ -91,8 +91,8 @@ class SpecialtyServiceTest {
         );
 
         assertThatThrownBy(() -> catalog.rename(command))
-            .isInstanceOf(IllegalStateException.class)
-            .hasMessageContaining("specialty versions do not match");
+            .isInstanceOf(SpecialtyException.VersionConflict.class)
+            .hasMessageContaining("Specialty version does not match current state");
     }
 
     @Test
