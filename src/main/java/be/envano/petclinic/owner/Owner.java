@@ -8,14 +8,14 @@ public class Owner {
 
     private final List<OwnerEvent> events = new ArrayList<>();
 
-    private Id id;
+    private final Id id;
     private Name name;
     private Address address;
     private City city;
     private Telephone telephone;
-    private int version;
+    private final int version;
 
-    public Owner(OwnerCommand.Load command) {
+    Owner(OwnerCommand.Rehydrate command) {
         Objects.requireNonNull(command);
         this.id = command.id();
         this.name = command.name();
@@ -25,38 +25,41 @@ public class Owner {
         this.version = command.version();
     }
 
-    public Owner(OwnerCommand.Register command) {
+    Owner(Id id, OwnerCommand.Register command) {
+        Objects.requireNonNull(id);
         Objects.requireNonNull(command);
+        this.id = id;
         this.name = command.name();
         this.address = command.address();
         this.city = command.city();
         this.telephone = command.telephone();
+        this.version = 0;
         this.events.add(new OwnerEvent.Registered(this));
     }
 
-    public void rename(OwnerCommand.Rename command) {
+    void rename(OwnerCommand.Rename command) {
         Objects.requireNonNull(command);
 
         Name originalName = this.name;
 
-        if (command.version() != this.version)
-            throw new IllegalArgumentException("Versions don't match");
+        if (this.version != command.version())
+            throw new OwnerException.VersionConflict();
         if (command.name().equals(this.name))
-            throw new IllegalArgumentException("Name already exists");
+            throw new IllegalArgumentException("Name cannot be the same");
 
         this.name = command.name();
         this.events.add(new OwnerEvent.Renamed(this, originalName));
     }
 
-    public void changeContactDetails(OwnerCommand.ChangeContactDetails command) {
+    void changeContactDetails(OwnerCommand.ChangeContactDetails command) {
         Objects.requireNonNull(command);
 
         final City originalCity = this.city;
         final Address originalAddress = this.address;
         final Telephone originalTelephone = this.telephone;
 
-        if (command.version() != this.version)
-            throw new IllegalArgumentException("Versions don't match");
+        if (this.version != command.version())
+            throw new OwnerException.VersionConflict();
 
         this.address = command.address();
         this.city = command.city();
@@ -69,8 +72,8 @@ public class Owner {
         ));
     }
 
-    public List<OwnerEvent> events() {
-        return events;
+    List<OwnerEvent> events() {
+        return List.copyOf(events);
     }
 
     public Id id() {
@@ -93,15 +96,23 @@ public class Owner {
         return telephone;
     }
 
+    public int version() {
+        return version;
+    }
+
     public record Id(long value) {
 
         public Id {
             if (value < 1)
-                throw new IllegalArgumentException("Value must be positive");
+                throw new IllegalArgumentException("owner id must be positive");
         }
 
         public static Id fromLong(long value) {
             return new Id(value);
+        }
+
+        public long toLong() {
+            return value;
         }
 
     }

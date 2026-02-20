@@ -1,7 +1,5 @@
 package be.envano.petclinic.owner;
 
-import be.envano.petclinic.pet.Pet;
-
 public sealed interface OwnerEvent {
 
     record Registered(Owner owner) implements OwnerEvent {}
@@ -16,16 +14,6 @@ public sealed interface OwnerEvent {
     record Renamed(
         Owner owner,
         Owner.Name originalName
-    ) implements OwnerEvent {}
-
-    record PetAdopted(
-        Owner owner,
-        Pet.Id adoptedPetId
-    ) implements OwnerEvent {}
-
-    record RelinquishPet(
-        Owner owner,
-        Pet.Id relinquishedPetId
     ) implements OwnerEvent {}
 
 }

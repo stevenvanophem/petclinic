@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public interface OwnerCommand {
 
-    record Load(
+    record Rehydrate(
         Owner.Id id,
         Owner.Name name,
         Owner.Address address,
@@ -13,7 +13,7 @@ public interface OwnerCommand {
         int version
     ) {
 
-        public Load {
+        public Rehydrate {
             Objects.requireNonNull(id);
             Objects.requireNonNull(name);
             Objects.requireNonNull(address);
