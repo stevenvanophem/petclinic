@@ -54,8 +54,8 @@ class VetRepositoryTest {
     @Test
     @DisplayName("I can insert a new vet with specialties")
     void testInsert() {
-        createSpecialty(1L, "radiology");
-        createSpecialty(2L, "surgery");
+        createSpecialty(VetTestFactory.JamesCarter.RADIOLOGY_ID, VetTestFactory.JamesCarter.RADIOLOGY_NAME);
+        createSpecialty(VetTestFactory.JamesCarter.SURGERY_ID, VetTestFactory.JamesCarter.SURGERY_NAME);
 
         Vet result = repository.add(new Vet(new VetCommand.Rehydrate(
             VetTestFactory.JamesCarter.ID,
@@ -73,9 +73,9 @@ class VetRepositoryTest {
     @Test
     @DisplayName("I can update an existing vet")
     void testUpdate() {
-        createSpecialty(1L, "radiology");
-        createSpecialty(2L, "surgery");
-        createSpecialty(3L, "dentistry");
+        createSpecialty(VetTestFactory.JamesCarter.RADIOLOGY_ID, VetTestFactory.JamesCarter.RADIOLOGY_NAME);
+        createSpecialty(VetTestFactory.JamesCarter.SURGERY_ID, VetTestFactory.JamesCarter.SURGERY_NAME);
+        createSpecialty(VetTestFactory.HelenLeary.DENTISTRY_ID, VetTestFactory.HelenLeary.DENTISTRY_NAME);
 
         Vet given = repository.add(new Vet(new VetCommand.Rehydrate(
             VetTestFactory.JamesCarter.ID,
@@ -84,8 +84,8 @@ class VetRepositoryTest {
             0
         )));
 
-        Vet.Name renamed = Vet.Name.fromStrings("Helen", "Leary");
-        List<Specialty.Id> changedSpecialties = List.of(Specialty.Id.fromLong(3L));
+        Vet.Name renamed = VetTestFactory.HelenLeary.NAME;
+        List<Specialty.Id> changedSpecialties = VetTestFactory.HelenLeary.SPECIALTIES;
         Vet result = repository.update(new Vet(new VetCommand.Rehydrate(
             given.id(),
             renamed,
@@ -101,11 +101,11 @@ class VetRepositoryTest {
     @Test
     @DisplayName("I can delete an existing vet")
     void testDelete() {
-        createSpecialty(1L, "radiology");
+        createSpecialty(VetTestFactory.JamesCarter.RADIOLOGY_ID, VetTestFactory.JamesCarter.RADIOLOGY_NAME);
         Vet given = repository.add(new Vet(new VetCommand.Rehydrate(
             VetTestFactory.JamesCarter.ID,
             VetTestFactory.JamesCarter.NAME,
-            List.of(Specialty.Id.fromLong(1L)),
+            List.of(Specialty.Id.fromLong(VetTestFactory.JamesCarter.RADIOLOGY_ID)),
             0
         )));
 

@@ -1,7 +1,12 @@
 package be.envano.petclinic.vet.rest;
 
 import be.envano.petclinic.platform.journal.support.TestJournal;
+import be.envano.petclinic.specialty.Specialty;
+import be.envano.petclinic.specialty.SpecialtyCommand;
+import be.envano.petclinic.specialty.SpecialtyService;
+import be.envano.petclinic.specialty.SpecialtyTestFactory;
 import be.envano.petclinic.vet.VetEvent;
+import be.envano.petclinic.vet.VetTestFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,14 +48,17 @@ class VetRestControllerIntegrationTest {
 
     private final JdbcClient jdbcClient;
     private final TestJournal journal;
+    private final SpecialtyService specialtyService;
 
     @Autowired
     VetRestControllerIntegrationTest(
         JdbcClient jdbcClient,
-        TestJournal journal
+        TestJournal journal,
+        SpecialtyService specialtyService
     ) {
         this.jdbcClient = jdbcClient;
         this.journal = journal;
+        this.specialtyService = specialtyService;
     }
 
     @AfterEach
@@ -62,13 +70,13 @@ class VetRestControllerIntegrationTest {
     @Test
     @DisplayName("I can hire a new vet")
     void testHire() {
-        createSpecialty(1L, "radiology");
-        createSpecialty(2L, "surgery");
+        long radiologyId = createSpecialty(SpecialtyTestFactory.Radiology.createRegisterCommand());
+        long surgeryId = createSpecialty(SpecialtyTestFactory.Surgery.createRegisterCommand());
 
         ResponseEntity<VetRestModel.Response> response = RestClient.create("http://localhost:" + port)
             .post()
             .uri("/vets")
-            .body(new VetRestModel.PostRequest("James", "Carter", List.of(1L, 2L)))
+            .body(new VetRestModel.PostRequest(VetTestFactory.JamesCarter.FIRST_NAME, VetTestFactory.JamesCarter.LAST_NAME, List.of(radiologyId, surgeryId)))
             .retrieve()
             .toEntity(VetRestModel.Response.class);
 
@@ -76,18 +84,22 @@ class VetRestControllerIntegrationTest {
         VetRestModel.Response result = response.getBody();
         assertThat(result).isNotNull();
         assertThat(result.id()).isGreaterThan(0L);
-        assertThat(result.firstName()).isEqualTo("James");
-        assertThat(result.lastName()).isEqualTo("Carter");
+        assertThat(result.firstName()).isEqualTo(VetTestFactory.JamesCarter.FIRST_NAME);
+        assertThat(result.lastName()).isEqualTo(VetTestFactory.JamesCarter.LAST_NAME);
         assertThat(result.specialtyIds().size()).isEqualTo(2);
         assertThat(result.version()).isEqualTo(0);
-        assertThat(journal.events().getFirst()).isInstanceOf(VetEvent.Hired.class);
+        assertThat(journal.events().stream().anyMatch(VetEvent.Hired.class::isInstance)).isTrue();
     }
 
     @Test
     @DisplayName("I get duplicate-name conflict when hiring same full name twice")
     void testDuplicateName() {
-        createSpecialty(1L, "radiology");
-        VetRestModel.PostRequest request = new VetRestModel.PostRequest("James", "Carter", List.of(1L));
+        long radiologyId = createSpecialty(SpecialtyTestFactory.Radiology.createRegisterCommand());
+        VetRestModel.PostRequest request = new VetRestModel.PostRequest(
+            VetTestFactory.JamesCarter.FIRST_NAME,
+            VetTestFactory.JamesCarter.LAST_NAME,
+            List.of(radiologyId)
+        );
 
         RestClient.create("http://localhost:" + port)
             .post()
@@ -114,7 +126,7 @@ class VetRestControllerIntegrationTest {
         ResponseEntity<ProblemDetail> response = RestClient.create("http://localhost:" + port)
             .put()
             .uri("/vets/{id}/name", 99L)
-            .body(new VetRestModel.RenameRequest("Sam", "Baker", 0))
+            .body(new VetRestModel.RenameRequest(VetTestFactory.SamBaker.FIRST_NAME, VetTestFactory.SamBaker.LAST_NAME, 0))
             .exchange((_, res) -> ResponseEntity.status(res.getStatusCode()).body(res.bodyTo(ProblemDetail.class)));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(404));
@@ -126,14 +138,14 @@ class VetRestControllerIntegrationTest {
     @Test
     @DisplayName("I get version-conflict when specializing with stale version")
     void testSpecializeVersionConflict() {
-        createSpecialty(1L, "radiology");
-        createSpecialty(2L, "surgery");
-        createSpecialty(3L, "dentistry");
+        long radiologyId = createSpecialty(SpecialtyTestFactory.Radiology.createRegisterCommand());
+        long surgeryId = createSpecialty(SpecialtyTestFactory.Surgery.createRegisterCommand());
+        long dentistryId = createSpecialty(SpecialtyTestFactory.Dentistry.createRegisterCommand());
 
         ResponseEntity<VetRestModel.Response> created = RestClient.create("http://localhost:" + port)
             .post()
             .uri("/vets")
-            .body(new VetRestModel.PostRequest("James", "Carter", List.of(1L)))
+            .body(new VetRestModel.PostRequest(VetTestFactory.JamesCarter.FIRST_NAME, VetTestFactory.JamesCarter.LAST_NAME, List.of(radiologyId)))
             .retrieve()
             .toEntity(VetRestModel.Response.class);
 
@@ -143,7 +155,7 @@ class VetRestControllerIntegrationTest {
         ResponseEntity<ProblemDetail> response = RestClient.create("http://localhost:" + port)
             .put()
             .uri("/vets/{id}/specialties", vet.id())
-            .body(new VetRestModel.SpecializeRequest(List.of(2L, 3L), vet.version() + 1))
+            .body(new VetRestModel.SpecializeRequest(List.of(surgeryId, dentistryId), vet.version() + 1))
             .exchange((_, res) -> ResponseEntity.status(res.getStatusCode()).body(res.bodyTo(ProblemDetail.class)));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(409));
@@ -155,11 +167,11 @@ class VetRestControllerIntegrationTest {
     @Test
     @DisplayName("I can fire a vet and receive fired status")
     void testFire() {
-        createSpecialty(1L, "radiology");
+        long radiologyId = createSpecialty(SpecialtyTestFactory.Radiology.createRegisterCommand());
         ResponseEntity<VetRestModel.Response> created = RestClient.create("http://localhost:" + port)
             .post()
             .uri("/vets")
-            .body(new VetRestModel.PostRequest("James", "Carter", List.of(1L)))
+            .body(new VetRestModel.PostRequest(VetTestFactory.JamesCarter.FIRST_NAME, VetTestFactory.JamesCarter.LAST_NAME, List.of(radiologyId)))
             .retrieve()
             .toEntity(VetRestModel.Response.class);
 
@@ -185,13 +197,13 @@ class VetRestControllerIntegrationTest {
     @Test
     @DisplayName("I can de-specialize an existing vet")
     void testDeSpecialize() {
-        createSpecialty(1L, "radiology");
-        createSpecialty(2L, "surgery");
+        long radiologyId = createSpecialty(SpecialtyTestFactory.Radiology.createRegisterCommand());
+        long surgeryId = createSpecialty(SpecialtyTestFactory.Surgery.createRegisterCommand());
 
         ResponseEntity<VetRestModel.Response> created = RestClient.create("http://localhost:" + port)
             .post()
             .uri("/vets")
-            .body(new VetRestModel.PostRequest("James", "Carter", List.of(1L, 2L)))
+            .body(new VetRestModel.PostRequest(VetTestFactory.JamesCarter.FIRST_NAME, VetTestFactory.JamesCarter.LAST_NAME, List.of(radiologyId, surgeryId)))
             .retrieve()
             .toEntity(VetRestModel.Response.class);
 
@@ -200,7 +212,7 @@ class VetRestControllerIntegrationTest {
 
         ResponseEntity<VetRestModel.Response> response = RestClient.create("http://localhost:" + port)
             .method(HttpMethod.DELETE)
-            .uri("/vets/{id}/specialties/{specialtyId}", vet.id(), 1L)
+            .uri("/vets/{id}/specialties/{specialtyId}", vet.id(), radiologyId)
             .body(new VetRestModel.DeSpecializeRequest(vet.version()))
             .retrieve()
             .toEntity(VetRestModel.Response.class);
@@ -209,17 +221,12 @@ class VetRestControllerIntegrationTest {
         VetRestModel.Response body = response.getBody();
         assertThat(body).isNotNull();
         assertThat(body.specialtyIds().size()).isEqualTo(1);
-        assertThat(body.specialtyIds().contains(1L)).isFalse();
+        assertThat(body.specialtyIds().contains(radiologyId)).isFalse();
     }
 
-    private void createSpecialty(long id, String name) {
-        jdbcClient.sql("""
-            INSERT INTO specialty (ID, NAME, VERSION)
-            VALUES (:id, :name, 0)
-            """)
-            .param("id", id)
-            .param("name", name)
-            .update();
+    private long createSpecialty(SpecialtyCommand.Register command) {
+        Specialty specialty = specialtyService.register(command);
+        return specialty.id().toLong();
     }
 
     @TestConfiguration

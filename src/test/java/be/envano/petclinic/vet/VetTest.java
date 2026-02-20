@@ -10,7 +10,7 @@ class VetTest {
     @Test
     @DisplayName("A vet first name can't be blank")
     void testFirstNameBlank() {
-        assertThatThrownBy(() -> Vet.Name.fromStrings(" ", "Carter"))
+        assertThatThrownBy(() -> Vet.Name.fromStrings(" ", VetTestFactory.JamesCarter.LAST_NAME))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Vet first name cannot be blank.");
     }
@@ -18,7 +18,7 @@ class VetTest {
     @Test
     @DisplayName("A vet last name can't be blank")
     void testLastNameBlank() {
-        assertThatThrownBy(() -> Vet.Name.fromStrings("James", " "))
+        assertThatThrownBy(() -> Vet.Name.fromStrings(VetTestFactory.JamesCarter.FIRST_NAME, " "))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Vet last name cannot be blank.");
     }

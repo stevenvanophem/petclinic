@@ -51,7 +51,7 @@ class VetServiceTest {
             VetTestFactory.JamesCarter.SPECIALTIES,
             0
         ));
-        Vet.Name renamed = Vet.Name.fromStrings("Sam", "Baker");
+        Vet.Name renamed = VetTestFactory.SamBaker.NAME;
         when(repository.findById(VetTestFactory.JamesCarter.ID)).thenReturn(Optional.of(stored));
         when(repository.update(any(Vet.class))).thenAnswer(invocation -> {
             Vet vet = invocation.getArgument(0);
@@ -80,7 +80,7 @@ class VetServiceTest {
 
         VetCommand.Rename command = new VetCommand.Rename(
             stored.id(),
-            Vet.Name.fromStrings("Sam", "Baker"),
+            VetTestFactory.SamBaker.NAME,
             0
         );
 

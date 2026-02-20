@@ -25,7 +25,7 @@ class SpecialtyServiceTest {
     @Test
     @DisplayName("I can register a new specialty to the catalog")
     void testRegister() {
-        SpecialtyCommand.Register command = new SpecialtyCommand.Register(SpecialtyTestFactory.Surgery.NAME);
+        SpecialtyCommand.Register command = SpecialtyTestFactory.Surgery.createRegisterCommand();
         when(repository.nextId()).thenReturn(Specialty.Id.one());
         when(repository.add(org.mockito.ArgumentMatchers.any(Specialty.class)))
             .thenAnswer(invocation -> invocation.getArgument(0));
@@ -44,11 +44,7 @@ class SpecialtyServiceTest {
     @DisplayName("I can rename a specialty")
     void testRename() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
-        Specialty stored = new Specialty(new SpecialtyCommand.Rehydrate(
-            SpecialtyTestFactory.Surgery.ID,
-            SpecialtyTestFactory.Surgery.NAME,
-            0
-        ));
+        Specialty stored = new Specialty(SpecialtyTestFactory.Surgery.createRehydrateCommand());
         when(repository.findById(SpecialtyTestFactory.Surgery.ID)).thenReturn(Optional.of(stored));
         when(repository.update(org.mockito.ArgumentMatchers.any(Specialty.class)))
             .thenAnswer(invocation -> {
@@ -77,12 +73,8 @@ class SpecialtyServiceTest {
     @DisplayName("Can't rename when the version mismatches")
     void testRenameMismatch() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
-        Specialty stored = new Specialty(new SpecialtyCommand.Rehydrate(
-            Specialty.Id.fromLong(1L),
-            SpecialtyTestFactory.Surgery.NAME,
-            1
-        ));
-        when(repository.findById(Specialty.Id.fromLong(1L))).thenReturn(Optional.of(stored));
+        Specialty stored = new Specialty(SpecialtyTestFactory.Surgery.createRehydrateCommand(1));
+        when(repository.findById(SpecialtyTestFactory.Surgery.ID)).thenReturn(Optional.of(stored));
 
         final var command = new SpecialtyCommand.Rename(
             stored.id(),
@@ -99,21 +91,9 @@ class SpecialtyServiceTest {
     @DisplayName("I can find all specialities")
     void testFindAll() {
         List<Specialty> specialties = List.of(
-            new Specialty(new SpecialtyCommand.Rehydrate(
-            SpecialtyTestFactory.Surgery.ID,
-            SpecialtyTestFactory.Surgery.NAME,
-            0
-        )),
-            new Specialty(new SpecialtyCommand.Rehydrate(
-            Specialty.Id.fromLong(3L),
-            SpecialtyTestFactory.Dentistry.NAME,
-            0
-        )),
-            new Specialty(new SpecialtyCommand.Rehydrate(
-            Specialty.Id.fromLong(1L),
-            SpecialtyTestFactory.Radiology.NAME,
-            0
-        ))
+            new Specialty(SpecialtyTestFactory.Surgery.createRehydrateCommand()),
+            new Specialty(SpecialtyTestFactory.Dentistry.createRehydrateCommand()),
+            new Specialty(SpecialtyTestFactory.Radiology.createRehydrateCommand())
         );
         when(repository.findAll()).thenReturn(specialties);
 
