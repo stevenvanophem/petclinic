@@ -8,10 +8,10 @@ import org.springframework.lang.NonNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-class SpecialtyRowMapper implements RowMapper<SpecialtyAggregate> {
+class SpecialtyRowMapper implements RowMapper<SpecialtyWriteModel> {
 
 	@Override
-	public SpecialtyAggregate mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
+	public SpecialtyWriteModel mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
 		final var id = new Specialty.Id(rs.getLong("id"));
 		final var name = new Specialty.Name(rs.getString("name"));
 		final int version = rs.getInt("version");
@@ -20,7 +20,7 @@ class SpecialtyRowMapper implements RowMapper<SpecialtyAggregate> {
 			id, name, version
 		);
 
-		return SpecialtyAggregate.load(command);
+		return SpecialtyWriteModel.load(command);
 	}
 
 }

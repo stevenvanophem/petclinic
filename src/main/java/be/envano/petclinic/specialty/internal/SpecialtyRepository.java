@@ -33,7 +33,7 @@ public class SpecialtyRepository {
 		return new Specialty.Id(value);
 	}
 
-	public Specialty add(SpecialtyAggregate specialty) {
+	public Specialty add(SpecialtyWriteModel specialty) {
 		Objects.requireNonNull(specialty);
 
 		String sql = """
@@ -50,7 +50,7 @@ public class SpecialtyRepository {
 		return specialty.toSnapshot();
 	}
 
-	public Specialty update(SpecialtyAggregate specialty) {
+	public Specialty update(SpecialtyWriteModel specialty) {
 		Objects.requireNonNull(specialty);
 
 		final var id = specialty.id();
@@ -80,10 +80,10 @@ public class SpecialtyRepository {
 			newVersion
 		);
 
-		return SpecialtyAggregate.load(command).toSnapshot();
+		return SpecialtyWriteModel.load(command).toSnapshot();
 	}
 
-	public Optional<SpecialtyAggregate> findById(Specialty.Id id) {
+	public Optional<SpecialtyWriteModel> findById(Specialty.Id id) {
 		String sql = """
 			SELECT ID, NAME, VERSION
 			FROM specialty
@@ -106,7 +106,7 @@ public class SpecialtyRepository {
 			.query(ROW_MAPPER)
 			.list()
 			.stream()
-			.map(SpecialtyAggregate::toSnapshot)
+			.map(SpecialtyWriteModel::toSnapshot)
 			.toList();
 	}
 

@@ -2,13 +2,13 @@ package be.envano.petclinic.specialty.internal.rest;
 
 import be.envano.petclinic.specialty.Specialty;
 
-final class ResponseFactory {
+final class SpecialtyResponseFactory {
 
-    private ResponseFactory() {
+    private SpecialtyResponseFactory() {
     }
 
-    static RestModel.Response create(Specialty specialty) {
-        return new RestModel.Response(
+    static SpecialtyRestModel.Response create(Specialty specialty) {
+        return new SpecialtyRestModel.Response(
             specialty.id().toLong(),
             specialty.name().toString(),
             specialty.version()

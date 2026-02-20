@@ -1,9 +1,9 @@
 package be.envano.petclinic.specialty;
 
 import be.envano.petclinic.platform.journal.support.TestJournal;
-import be.envano.petclinic.specialty.internal.SpecialtyAggregate;
 import be.envano.petclinic.specialty.internal.SpecialtyInternalService;
 import be.envano.petclinic.specialty.internal.SpecialtyRepository;
+import be.envano.petclinic.specialty.internal.SpecialtyWriteModel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -30,8 +30,8 @@ class SpecialtyServiceTest {
     void testRegister() {
         SpecialtyCommand.Register command = new SpecialtyCommand.Register(SpecialtyTestFactory.Surgery.NAME);
         when(repository.nextId()).thenReturn(Specialty.Id.one());
-        when(repository.add(org.mockito.ArgumentMatchers.any(SpecialtyAggregate.class)))
-            .thenAnswer(invocation -> ((SpecialtyAggregate) invocation.getArgument(0)).toSnapshot());
+        when(repository.add(org.mockito.ArgumentMatchers.any(SpecialtyWriteModel.class)))
+            .thenAnswer(invocation -> ((SpecialtyWriteModel) invocation.getArgument(0)).toSnapshot());
 
         Specialty result = catalog.register(command);
 
@@ -47,15 +47,15 @@ class SpecialtyServiceTest {
     @DisplayName("I can rename a specialty")
     void testRename() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
-        SpecialtyAggregate stored = SpecialtyAggregate.load(new SpecialtyCommand.Load(
+        SpecialtyWriteModel stored = SpecialtyWriteModel.load(new SpecialtyCommand.Load(
             SpecialtyTestFactory.Surgery.ID,
             SpecialtyTestFactory.Surgery.NAME,
             0
         ));
         when(repository.findById(SpecialtyTestFactory.Surgery.ID)).thenReturn(Optional.of(stored));
-        when(repository.update(org.mockito.ArgumentMatchers.any(SpecialtyAggregate.class)))
+        when(repository.update(org.mockito.ArgumentMatchers.any(SpecialtyWriteModel.class)))
             .thenAnswer(invocation -> {
-                SpecialtyAggregate aggregate = invocation.getArgument(0);
+                SpecialtyWriteModel aggregate = invocation.getArgument(0);
                 return new Specialty(aggregate.id(), aggregate.name(), aggregate.version() + 1);
             });
 
@@ -82,7 +82,7 @@ class SpecialtyServiceTest {
     @DisplayName("Can't rename when the version mismatches")
     void testRenameMismatch() {
         final Specialty.Name newName = Specialty.Name.fromString("sugar");
-        SpecialtyAggregate stored = SpecialtyAggregate.load(new SpecialtyCommand.Load(
+        SpecialtyWriteModel stored = SpecialtyWriteModel.load(new SpecialtyCommand.Load(
             Specialty.Id.fromLong(1L),
             SpecialtyTestFactory.Surgery.NAME,
             1
@@ -104,17 +104,17 @@ class SpecialtyServiceTest {
     @DisplayName("I can find all specialities")
     void testFindAll() {
         List<Specialty> specialties = List.of(
-            SpecialtyAggregate.load(new SpecialtyCommand.Load(
+            SpecialtyWriteModel.load(new SpecialtyCommand.Load(
             SpecialtyTestFactory.Surgery.ID,
             SpecialtyTestFactory.Surgery.NAME,
             0
         )).toSnapshot(),
-            SpecialtyAggregate.load(new SpecialtyCommand.Load(
+            SpecialtyWriteModel.load(new SpecialtyCommand.Load(
             Specialty.Id.fromLong(3L),
             SpecialtyTestFactory.Dentistry.NAME,
             0
         )).toSnapshot(),
-            SpecialtyAggregate.load(new SpecialtyCommand.Load(
+            SpecialtyWriteModel.load(new SpecialtyCommand.Load(
             Specialty.Id.fromLong(1L),
             SpecialtyTestFactory.Radiology.NAME,
             0

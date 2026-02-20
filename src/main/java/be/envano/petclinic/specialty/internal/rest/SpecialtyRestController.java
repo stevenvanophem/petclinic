@@ -18,40 +18,40 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping(value = "/specialties")
-class SpecialtyController {
+class SpecialtyRestController {
 
     private final SpecialtyService catalog;
 
-    SpecialtyController(SpecialtyService catalog) {
+    SpecialtyRestController(SpecialtyService catalog) {
         this.catalog = catalog;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    RestModel.Response post(@RequestBody RestModel.PostRequest request) {
+    SpecialtyRestModel.Response post(@RequestBody SpecialtyRestModel.PostRequest request) {
         Objects.requireNonNull(request);
 
-        SpecialtyCommand.Register command = CommandFactory.create(request);
+        SpecialtyCommand.Register command = SpecialtyCommandFactory.create(request);
         Specialty specialty = catalog.register(command);
-        return ResponseFactory.create(specialty);
+        return SpecialtyResponseFactory.create(specialty);
     }
 
     @PutMapping(value = "/{id}/name")
-    RestModel.Response put(
+    SpecialtyRestModel.Response put(
         @PathVariable long id,
-        @RequestBody RestModel.RenameRequest request
+        @RequestBody SpecialtyRestModel.RenameRequest request
     ) {
         Objects.requireNonNull(request);
 
-        SpecialtyCommand.Rename command = CommandFactory.create(request, id);
+        SpecialtyCommand.Rename command = SpecialtyCommandFactory.create(request, id);
         Specialty specialty = catalog.rename(command);
-        return ResponseFactory.create(specialty);
+        return SpecialtyResponseFactory.create(specialty);
     }
 
     @GetMapping
-    List<RestModel.Response> findAll() {
+    List<SpecialtyRestModel.Response> findAll() {
         return catalog.findAll().stream()
-            .map(ResponseFactory::create)
+            .map(SpecialtyResponseFactory::create)
             .toList();
     }
 

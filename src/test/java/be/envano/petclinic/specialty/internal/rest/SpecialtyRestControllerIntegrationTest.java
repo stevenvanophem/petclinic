@@ -31,7 +31,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-class SpecialtyControllerIntegrationTest {
+class SpecialtyRestControllerIntegrationTest {
 
     private @LocalServerPort int port;
 
@@ -46,7 +46,7 @@ class SpecialtyControllerIntegrationTest {
     private final TestJournal journal;
 
     @Autowired
-    SpecialtyControllerIntegrationTest(
+    SpecialtyRestControllerIntegrationTest(
         JdbcClient jdbcClient,
         TestJournal journal
     ) {
@@ -63,20 +63,20 @@ class SpecialtyControllerIntegrationTest {
     @Test
     @DisplayName("I can register a new specialty")
     void testRegister() {
-        final var request = new RestModel.PostRequest(
+        final var request = new SpecialtyRestModel.PostRequest(
             SpecialtyTestFactory.Radiology.NAME.toString()
         );
 
-        ResponseEntity<RestModel.Response> response = RestClient.create("http://localhost:" + port)
+        ResponseEntity<SpecialtyRestModel.Response> response = RestClient.create("http://localhost:" + port)
             .post()
             .uri("/specialties")
             .body(request)
             .retrieve()
-            .toEntity(RestModel.Response.class);
+            .toEntity(SpecialtyRestModel.Response.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(201));
 
-        RestModel.Response result = response.getBody();
+        SpecialtyRestModel.Response result = response.getBody();
         assertThat(result).isNotNull();
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.name()).isEqualTo(SpecialtyTestFactory.Radiology.NAME.toString());

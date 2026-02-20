@@ -37,7 +37,7 @@ public class SpecialtyInternalService implements SpecialtyService {
         logger.trace("{}", command);
 
         Specialty.Id id = repository.nextId();
-        SpecialtyAggregate specialty = SpecialtyAggregate.register(id, command);
+        SpecialtyWriteModel specialty = SpecialtyWriteModel.register(id, command);
         specialty.events().forEach(journal::appendEvent);
         return repository.add(specialty);
     }
@@ -50,7 +50,7 @@ public class SpecialtyInternalService implements SpecialtyService {
         logger.debug("Renaming specialty");
         logger.trace("{}", command);
 
-        SpecialtyAggregate specialty = repository.findById(command.id()).orElseThrow();
+        SpecialtyWriteModel specialty = repository.findById(command.id()).orElseThrow();
         specialty.rename(command);
         specialty.events().forEach(journal::appendEvent);
         return repository.update(specialty);

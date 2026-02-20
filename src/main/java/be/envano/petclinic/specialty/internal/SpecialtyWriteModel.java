@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class SpecialtyAggregate {
+public class SpecialtyWriteModel {
 
     private final List<SpecialtyEvent> events = new ArrayList<>();
 
@@ -16,22 +16,22 @@ public class SpecialtyAggregate {
     private Specialty.Name name;
     private final int version;
 
-    public static SpecialtyAggregate load(SpecialtyCommand.Load command) {
-        return new SpecialtyAggregate(command);
+    public static SpecialtyWriteModel load(SpecialtyCommand.Load command) {
+        return new SpecialtyWriteModel(command);
     }
 
-    public static SpecialtyAggregate register(Specialty.Id id, SpecialtyCommand.Register command) {
-        return new SpecialtyAggregate(id, command);
+    public static SpecialtyWriteModel register(Specialty.Id id, SpecialtyCommand.Register command) {
+        return new SpecialtyWriteModel(id, command);
     }
 
-    private SpecialtyAggregate(SpecialtyCommand.Load command) {
+    private SpecialtyWriteModel(SpecialtyCommand.Load command) {
         Objects.requireNonNull(command);
         this.id = command.id();
         this.name = command.name();
         this.version = command.version();
     }
 
-    private SpecialtyAggregate(Specialty.Id id, SpecialtyCommand.Register command) {
+    private SpecialtyWriteModel(Specialty.Id id, SpecialtyCommand.Register command) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(command);
         this.id = id;

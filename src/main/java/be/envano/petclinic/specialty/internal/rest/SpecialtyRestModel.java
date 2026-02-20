@@ -1,6 +1,6 @@
 package be.envano.petclinic.specialty.internal.rest;
 
-interface RestModel {
+interface SpecialtyRestModel {
 
     record PostRequest(
         String name
