@@ -12,14 +12,14 @@ public class Specialty {
     private Name name;
     private final int version;
 
-    public Specialty(SpecialtyCommand.Rehydrate command) {
+    Specialty(SpecialtyCommand.Rehydrate command) {
         Objects.requireNonNull(command);
         this.id = command.id();
         this.name = command.name();
         this.version = command.version();
     }
 
-    public Specialty(Id id, SpecialtyCommand.Register command) {
+    Specialty(Id id, SpecialtyCommand.Register command) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(command);
 
@@ -29,7 +29,7 @@ public class Specialty {
         this.events.add(new SpecialtyEvent.Registered(this));
     }
 
-    public void rename(SpecialtyCommand.Rename command) {
+    void rename(SpecialtyCommand.Rename command) {
         Objects.requireNonNull(command);
 
         Name originalName = this.name;
@@ -53,7 +53,7 @@ public class Specialty {
         return version;
     }
 
-    public List<SpecialtyEvent> events() {
+    List<SpecialtyEvent> events() {
         return List.copyOf(events);
     }
 

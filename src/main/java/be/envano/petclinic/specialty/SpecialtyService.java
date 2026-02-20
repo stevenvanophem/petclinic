@@ -17,7 +17,7 @@ public class SpecialtyService {
     private final Journal journal;
     private final SpecialtyRepository repository;
 
-    public SpecialtyService(
+    SpecialtyService(
         Journal journal,
         SpecialtyRepository repository
     ) {
