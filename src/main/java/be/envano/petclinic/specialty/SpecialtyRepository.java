@@ -1,7 +1,5 @@
-package be.envano.petclinic.specialty.internal;
+package be.envano.petclinic.specialty;
 
-import be.envano.petclinic.specialty.Specialty;
-import be.envano.petclinic.specialty.SpecialtyCommand;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Repository
-public class SpecialtyRepository {
+class SpecialtyRepository {
 
 	private static final SpecialtyRowMapper ROW_MAPPER = new SpecialtyRowMapper();
 
@@ -33,7 +31,7 @@ public class SpecialtyRepository {
 		return new Specialty.Id(value);
 	}
 
-	public Specialty add(SpecialtyWriteModel specialty) {
+	public Specialty add(Specialty specialty) {
 		Objects.requireNonNull(specialty);
 
 		String sql = """
@@ -47,10 +45,10 @@ public class SpecialtyRepository {
 			.param("version", specialty.version())
 			.update();
 
-		return specialty.toSnapshot();
+		return specialty;
 	}
 
-	public Specialty update(SpecialtyWriteModel specialty) {
+	public Specialty update(Specialty specialty) {
 		Objects.requireNonNull(specialty);
 
 		final var id = specialty.id();
@@ -74,16 +72,16 @@ public class SpecialtyRepository {
 		if (rows == 0)
 			throw new IllegalStateException("Specialty was modified concurrently or does not exist");
 
-		var command = new SpecialtyCommand.Load(
+		var command = new SpecialtyCommand.Rehydrate(
 			id,
 			name,
 			newVersion
 		);
 
-		return SpecialtyWriteModel.load(command).toSnapshot();
+		return new Specialty(command);
 	}
 
-	public Optional<SpecialtyWriteModel> findById(Specialty.Id id) {
+	public Optional<Specialty> findById(Specialty.Id id) {
 		String sql = """
 			SELECT ID, NAME, VERSION
 			FROM specialty
@@ -104,10 +102,7 @@ public class SpecialtyRepository {
 
 		return jdbcClient.sql(sql)
 			.query(ROW_MAPPER)
-			.list()
-			.stream()
-			.map(SpecialtyWriteModel::toSnapshot)
-			.toList();
+			.list();
 	}
 
 }

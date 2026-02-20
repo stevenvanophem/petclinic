@@ -1,16 +1,60 @@
 package be.envano.petclinic.specialty;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public record Specialty(
-    Id id,
-    Name name,
-    int version
-) {
+public class Specialty {
 
-    public Specialty {
+    private final List<SpecialtyEvent> events = new ArrayList<>();
+
+    private final Id id;
+    private Name name;
+    private final int version;
+
+    public Specialty(SpecialtyCommand.Rehydrate command) {
+        Objects.requireNonNull(command);
+        this.id = command.id();
+        this.name = command.name();
+        this.version = command.version();
+    }
+
+    public Specialty(Id id, SpecialtyCommand.Register command) {
         Objects.requireNonNull(id);
-        Objects.requireNonNull(name);
+        Objects.requireNonNull(command);
+
+        this.id = id;
+        this.name = command.name();
+        this.version = 0;
+        this.events.add(new SpecialtyEvent.Registered(this));
+    }
+
+    public void rename(SpecialtyCommand.Rename command) {
+        Objects.requireNonNull(command);
+
+        Name originalName = this.name;
+
+        if (this.version != command.version())
+            throw new IllegalStateException("specialty versions do not match");
+
+        this.name = command.name();
+        this.events.add(new SpecialtyEvent.Renamed(this, originalName));
+    }
+
+    public Id id() {
+        return id;
+    }
+
+    public Name name() {
+        return name;
+    }
+
+    public int version() {
+        return version;
+    }
+
+    public List<SpecialtyEvent> events() {
+        return List.copyOf(events);
     }
 
     public record Id(long value) {

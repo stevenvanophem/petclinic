@@ -4,13 +4,13 @@ import java.util.Objects;
 
 public interface SpecialtyCommand {
 
-    record Load(
+    record Rehydrate(
         Specialty.Id id,
         Specialty.Name name,
         int version
     ) {
 
-        public Load {
+        public Rehydrate {
 			Objects.requireNonNull(id);
             Objects.requireNonNull(name);
         }

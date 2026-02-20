@@ -1,8 +1,5 @@
-package be.envano.petclinic.specialty.internal;
+package be.envano.petclinic.specialty;
 
-import be.envano.petclinic.specialty.Specialty;
-import be.envano.petclinic.specialty.SpecialtyCommand;
-import be.envano.petclinic.specialty.SpecialtyTestFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +48,7 @@ class SpecialtyRepositoryTest {
 	@Test
 	@DisplayName("I can insert a new specialty")
 	void testInsert() {
-		Specialty result = repository.add(SpecialtyWriteModel.load(new SpecialtyCommand.Load(
+		Specialty result = repository.add(new Specialty(new SpecialtyCommand.Rehydrate(
 			SpecialtyTestFactory.Surgery.ID,
 			SpecialtyTestFactory.Surgery.NAME,
 			0
@@ -69,20 +66,20 @@ class SpecialtyRepositoryTest {
 	@Test
 	@DisplayName("I can update an existing specialty")
 	void testUpdate() {
-		Specialty given = repository.add(SpecialtyWriteModel.load(new SpecialtyCommand.Load(
+		Specialty given = repository.add(new Specialty(new SpecialtyCommand.Rehydrate(
 			SpecialtyTestFactory.Surgery.ID,
 			SpecialtyTestFactory.Surgery.NAME,
 			0
 		)));
 
 		final var renamed = new Specialty.Name("Super Surgery");
-		final var command = new SpecialtyCommand.Load(
+		final var command = new SpecialtyCommand.Rehydrate(
 			given.id(),
 			renamed,
 			given.version()
 		);
 
-		Specialty result = repository.update(SpecialtyWriteModel.load(command));
+		Specialty result = repository.update(new Specialty(command));
 
 		assertThat(result).isNotNull();
 		assertThat(result.id()).isEqualTo(SpecialtyTestFactory.Surgery.ID);
