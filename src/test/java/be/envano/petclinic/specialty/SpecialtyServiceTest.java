@@ -56,18 +56,16 @@ class SpecialtyServiceTest {
                 return new Specialty(new SpecialtyCommand.Rehydrate(aggregate.id(), aggregate.name(), aggregate.version() + 1));
             });
 
-        Specialty loaded = stored;
-
         final var command = new SpecialtyCommand.Rename(
-            loaded.id(),
+            stored.id(),
             newName,
-            loaded.version()
+            stored.version()
         );
 
         Specialty result = catalog.rename(command);
 
         assertThat(result).isNotNull();
-        assertThat(result.id()).isEqualTo(loaded.id());
+        assertThat(result.id()).isEqualTo(stored.id());
         assertThat(result.name()).isEqualTo(newName);
         assertThat(result.version()).isEqualTo(1);
         assertThat(journal.events().getFirst())
