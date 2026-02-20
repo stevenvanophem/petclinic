@@ -25,7 +25,7 @@ class OwnerServiceTest {
     @Test
     @DisplayName("I can register a new owner")
     void testRegister() {
-        OwnerCommand.Register command = OwnerTestFactory.JamesCarter.createRegisterCommand();
+        OwnerCommand.Register command = OwnerTestFactory.GeorgeFranklin.createRegisterCommand();
         when(repository.nextId()).thenReturn(Owner.Id.fromLong(1L));
         when(repository.add(org.mockito.ArgumentMatchers.any(Owner.class)))
             .thenAnswer(invocation -> invocation.getArgument(0));
@@ -34,7 +34,7 @@ class OwnerServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result.id()).isEqualTo(Owner.Id.fromLong(1L));
-        assertThat(result.name()).isEqualTo(OwnerTestFactory.JamesCarter.NAME);
+        assertThat(result.name()).isEqualTo(OwnerTestFactory.GeorgeFranklin.NAME);
         assertThat(journal.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
             .isEqualTo(OwnerEvent.Registered.class.getSimpleName());
@@ -43,8 +43,8 @@ class OwnerServiceTest {
     @Test
     @DisplayName("I can rename an owner")
     void testRename() {
-        Owner stored = new Owner(OwnerTestFactory.JamesCarter.createRehydrateCommand());
-        when(repository.findById(OwnerTestFactory.JamesCarter.ID)).thenReturn(Optional.of(stored));
+        Owner stored = new Owner(OwnerTestFactory.GeorgeFranklin.createRehydrateCommand());
+        when(repository.findById(OwnerTestFactory.GeorgeFranklin.ID)).thenReturn(Optional.of(stored));
         when(repository.update(org.mockito.ArgumentMatchers.any(Owner.class)))
             .thenAnswer(invocation -> {
                 Owner aggregate = invocation.getArgument(0);
@@ -60,7 +60,7 @@ class OwnerServiceTest {
 
         OwnerCommand.Rename command = new OwnerCommand.Rename(
             stored.id(),
-            OwnerTestFactory.SamBaker.NAME,
+            OwnerTestFactory.EduardoRodriquez.NAME,
             stored.version()
         );
 
@@ -68,7 +68,7 @@ class OwnerServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result.id()).isEqualTo(stored.id());
-        assertThat(result.name()).isEqualTo(OwnerTestFactory.SamBaker.NAME);
+        assertThat(result.name()).isEqualTo(OwnerTestFactory.EduardoRodriquez.NAME);
         assertThat(result.version()).isEqualTo(1);
         assertThat(journal.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
@@ -78,8 +78,8 @@ class OwnerServiceTest {
     @Test
     @DisplayName("I can change owner contact details")
     void testChangeContactDetails() {
-        Owner stored = new Owner(OwnerTestFactory.JamesCarter.createRehydrateCommand());
-        when(repository.findById(OwnerTestFactory.JamesCarter.ID)).thenReturn(Optional.of(stored));
+        Owner stored = new Owner(OwnerTestFactory.GeorgeFranklin.createRehydrateCommand());
+        when(repository.findById(OwnerTestFactory.GeorgeFranklin.ID)).thenReturn(Optional.of(stored));
         when(repository.update(org.mockito.ArgumentMatchers.any(Owner.class)))
             .thenAnswer(invocation -> {
                 Owner aggregate = invocation.getArgument(0);
@@ -95,18 +95,18 @@ class OwnerServiceTest {
 
         OwnerCommand.ChangeContactDetails command = new OwnerCommand.ChangeContactDetails(
             stored.id(),
-            OwnerTestFactory.HelenLeary.ADDRESS,
-            OwnerTestFactory.HelenLeary.TELEPHONE,
-            OwnerTestFactory.HelenLeary.CITY,
+            OwnerTestFactory.BettyDavis.ADDRESS,
+            OwnerTestFactory.BettyDavis.TELEPHONE,
+            OwnerTestFactory.BettyDavis.CITY,
             stored.version()
         );
 
         Owner result = service.changeContactDetails(command);
 
         assertThat(result).isNotNull();
-        assertThat(result.address()).isEqualTo(OwnerTestFactory.HelenLeary.ADDRESS);
-        assertThat(result.telephone()).isEqualTo(OwnerTestFactory.HelenLeary.TELEPHONE);
-        assertThat(result.city()).isEqualTo(OwnerTestFactory.HelenLeary.CITY);
+        assertThat(result.address()).isEqualTo(OwnerTestFactory.BettyDavis.ADDRESS);
+        assertThat(result.telephone()).isEqualTo(OwnerTestFactory.BettyDavis.TELEPHONE);
+        assertThat(result.city()).isEqualTo(OwnerTestFactory.BettyDavis.CITY);
         assertThat(result.version()).isEqualTo(1);
         assertThat(journal.events().getFirst())
             .extracting(event -> event.getClass().getSimpleName())
@@ -116,12 +116,12 @@ class OwnerServiceTest {
     @Test
     @DisplayName("Can't rename when the version mismatches")
     void testRenameVersionMismatch() {
-        Owner stored = new Owner(OwnerTestFactory.JamesCarter.createRehydrateCommand(1));
-        when(repository.findById(OwnerTestFactory.JamesCarter.ID)).thenReturn(Optional.of(stored));
+        Owner stored = new Owner(OwnerTestFactory.GeorgeFranklin.createRehydrateCommand(1));
+        when(repository.findById(OwnerTestFactory.GeorgeFranklin.ID)).thenReturn(Optional.of(stored));
 
         OwnerCommand.Rename command = new OwnerCommand.Rename(
             stored.id(),
-            OwnerTestFactory.HelenLeary.NAME,
+            OwnerTestFactory.BettyDavis.NAME,
             3
         );
 
@@ -134,8 +134,8 @@ class OwnerServiceTest {
     @DisplayName("I can find all owners")
     void testFindAll() {
         List<Owner> owners = List.of(
-            new Owner(OwnerTestFactory.JamesCarter.createRehydrateCommand()),
-            new Owner(OwnerTestFactory.HelenLeary.createRehydrateCommand())
+            new Owner(OwnerTestFactory.GeorgeFranklin.createRehydrateCommand()),
+            new Owner(OwnerTestFactory.BettyDavis.createRehydrateCommand())
         );
         when(repository.findAll()).thenReturn(owners);
 
@@ -146,3 +146,4 @@ class OwnerServiceTest {
     }
 
 }
+

@@ -71,11 +71,11 @@ class OwnerRestControllerIntegrationTest {
     @DisplayName("I can register a new owner")
     void testRegister() {
         final var request = new OwnerRestModel.PostRequest(
-            OwnerTestFactory.JamesCarter.FIRST_NAME,
-            OwnerTestFactory.JamesCarter.LAST_NAME,
-            OwnerTestFactory.JamesCarter.ADDRESS_VALUE,
-            OwnerTestFactory.JamesCarter.TELEPHONE_VALUE,
-            OwnerTestFactory.JamesCarter.CITY_VALUE
+            OwnerTestFactory.GeorgeFranklin.FIRST_NAME,
+            OwnerTestFactory.GeorgeFranklin.LAST_NAME,
+            OwnerTestFactory.GeorgeFranklin.ADDRESS_VALUE,
+            OwnerTestFactory.GeorgeFranklin.TELEPHONE_VALUE,
+            OwnerTestFactory.GeorgeFranklin.CITY_VALUE
         );
 
         ResponseEntity<OwnerRestModel.Response> response = RestClient.create("http://localhost:" + port)
@@ -90,11 +90,11 @@ class OwnerRestControllerIntegrationTest {
         OwnerRestModel.Response result = response.getBody();
         assertThat(result).isNotNull();
         assertThat(result.id()).isGreaterThan(0L);
-        assertThat(result.firstName()).isEqualTo(OwnerTestFactory.JamesCarter.FIRST_NAME);
-        assertThat(result.lastName()).isEqualTo(OwnerTestFactory.JamesCarter.LAST_NAME);
-        assertThat(result.address()).isEqualTo(OwnerTestFactory.JamesCarter.ADDRESS_VALUE);
-        assertThat(result.telephone()).isEqualTo(OwnerTestFactory.JamesCarter.TELEPHONE_VALUE);
-        assertThat(result.city()).isEqualTo(OwnerTestFactory.JamesCarter.CITY_VALUE);
+        assertThat(result.firstName()).isEqualTo(OwnerTestFactory.GeorgeFranklin.FIRST_NAME);
+        assertThat(result.lastName()).isEqualTo(OwnerTestFactory.GeorgeFranklin.LAST_NAME);
+        assertThat(result.address()).isEqualTo(OwnerTestFactory.GeorgeFranklin.ADDRESS_VALUE);
+        assertThat(result.telephone()).isEqualTo(OwnerTestFactory.GeorgeFranklin.TELEPHONE_VALUE);
+        assertThat(result.city()).isEqualTo(OwnerTestFactory.GeorgeFranklin.CITY_VALUE);
         assertThat(result.version()).isEqualTo(0);
 
         List<Object> events = journal.events();
@@ -108,11 +108,11 @@ class OwnerRestControllerIntegrationTest {
 
         assertThat(record).isNotNull();
         assertThat(record.id()).isEqualTo(result.id());
-        assertThat(record.firstName()).isEqualTo(OwnerTestFactory.JamesCarter.FIRST_NAME);
-        assertThat(record.lastName()).isEqualTo(OwnerTestFactory.JamesCarter.LAST_NAME);
-        assertThat(record.address()).isEqualTo(OwnerTestFactory.JamesCarter.ADDRESS_VALUE);
-        assertThat(record.telephone()).isEqualTo(OwnerTestFactory.JamesCarter.TELEPHONE_VALUE);
-        assertThat(record.city()).isEqualTo(OwnerTestFactory.JamesCarter.CITY_VALUE);
+        assertThat(record.firstName()).isEqualTo(OwnerTestFactory.GeorgeFranklin.FIRST_NAME);
+        assertThat(record.lastName()).isEqualTo(OwnerTestFactory.GeorgeFranklin.LAST_NAME);
+        assertThat(record.address()).isEqualTo(OwnerTestFactory.GeorgeFranklin.ADDRESS_VALUE);
+        assertThat(record.telephone()).isEqualTo(OwnerTestFactory.GeorgeFranklin.TELEPHONE_VALUE);
+        assertThat(record.city()).isEqualTo(OwnerTestFactory.GeorgeFranklin.CITY_VALUE);
         assertThat(record.version()).isEqualTo(0);
     }
 
@@ -121,10 +121,10 @@ class OwnerRestControllerIntegrationTest {
     void testRegisterBlankFirstNameValidation() {
         final var request = new OwnerRestModel.PostRequest(
             " ",
-            OwnerTestFactory.JamesCarter.LAST_NAME,
-            OwnerTestFactory.JamesCarter.ADDRESS_VALUE,
-            OwnerTestFactory.JamesCarter.TELEPHONE_VALUE,
-            OwnerTestFactory.JamesCarter.CITY_VALUE
+            OwnerTestFactory.GeorgeFranklin.LAST_NAME,
+            OwnerTestFactory.GeorgeFranklin.ADDRESS_VALUE,
+            OwnerTestFactory.GeorgeFranklin.TELEPHONE_VALUE,
+            OwnerTestFactory.GeorgeFranklin.CITY_VALUE
         );
 
         ResponseEntity<ProblemDetail> response = RestClient.create("http://localhost:" + port)
@@ -144,8 +144,8 @@ class OwnerRestControllerIntegrationTest {
     @DisplayName("I get not-found details when renaming a missing owner")
     void testRenameMissingOwner() {
         final var request = new OwnerRestModel.RenameRequest(
-            OwnerTestFactory.SamBaker.FIRST_NAME,
-            OwnerTestFactory.SamBaker.LAST_NAME,
+            OwnerTestFactory.EduardoRodriquez.FIRST_NAME,
+            OwnerTestFactory.EduardoRodriquez.LAST_NAME,
             0
         );
 
@@ -165,14 +165,14 @@ class OwnerRestControllerIntegrationTest {
     @Test
     @DisplayName("I get version-conflict details when using a stale version")
     void testRenameVersionConflict() {
-        Owner owner = ownerService.register(OwnerTestFactory.JamesCarter.createRegisterCommand());
+        Owner owner = ownerService.register(OwnerTestFactory.GeorgeFranklin.createRegisterCommand());
 
         ResponseEntity<ProblemDetail> response = RestClient.create("http://localhost:" + port)
             .put()
             .uri("/owners/{id}/name", owner.id().toLong())
             .body(new OwnerRestModel.RenameRequest(
-                OwnerTestFactory.SamBaker.FIRST_NAME,
-                OwnerTestFactory.SamBaker.LAST_NAME,
+                OwnerTestFactory.EduardoRodriquez.FIRST_NAME,
+                OwnerTestFactory.EduardoRodriquez.LAST_NAME,
                 owner.version() + 1
             ))
             .exchange((_, res) -> ResponseEntity.status(res.getStatusCode()).body(res.bodyTo(ProblemDetail.class)));
@@ -187,11 +187,11 @@ class OwnerRestControllerIntegrationTest {
     @DisplayName("I get duplicate-name conflict when creating same owner twice")
     void testRegisterDuplicateNameConflict() {
         final var request = new OwnerRestModel.PostRequest(
-            OwnerTestFactory.JamesCarter.FIRST_NAME,
-            OwnerTestFactory.JamesCarter.LAST_NAME,
-            OwnerTestFactory.JamesCarter.ADDRESS_VALUE,
-            OwnerTestFactory.JamesCarter.TELEPHONE_VALUE,
-            OwnerTestFactory.JamesCarter.CITY_VALUE
+            OwnerTestFactory.GeorgeFranklin.FIRST_NAME,
+            OwnerTestFactory.GeorgeFranklin.LAST_NAME,
+            OwnerTestFactory.GeorgeFranklin.ADDRESS_VALUE,
+            OwnerTestFactory.GeorgeFranklin.TELEPHONE_VALUE,
+            OwnerTestFactory.GeorgeFranklin.CITY_VALUE
         );
 
         RestClient.create("http://localhost:" + port)
@@ -260,3 +260,4 @@ class OwnerRestControllerIntegrationTest {
     }
 
 }
+

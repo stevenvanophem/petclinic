@@ -48,11 +48,11 @@ class OwnerRepositoryTest {
     @Test
     @DisplayName("I can insert a new owner")
     void testInsert() {
-        Owner result = repository.add(new Owner(OwnerTestFactory.JamesCarter.createRehydrateCommand()));
+        Owner result = repository.add(new Owner(OwnerTestFactory.GeorgeFranklin.createRehydrateCommand()));
 
         assertThat(result).isNotNull();
-        assertThat(result.id()).isEqualTo(OwnerTestFactory.JamesCarter.ID);
-        assertThat(result.name()).isEqualTo(OwnerTestFactory.JamesCarter.NAME);
+        assertThat(result.id()).isEqualTo(OwnerTestFactory.GeorgeFranklin.ID);
+        assertThat(result.name()).isEqualTo(OwnerTestFactory.GeorgeFranklin.NAME);
         assertThat(result.version()).isEqualTo(0);
 
         int records = repository.findAll().size();
@@ -62,12 +62,12 @@ class OwnerRepositoryTest {
     @Test
     @DisplayName("I can update an existing owner")
     void testUpdate() {
-        Owner given = repository.add(new Owner(OwnerTestFactory.JamesCarter.createRehydrateCommand()));
+        Owner given = repository.add(new Owner(OwnerTestFactory.GeorgeFranklin.createRehydrateCommand()));
 
-        Owner.Name renamedName = OwnerTestFactory.SamBaker.NAME;
-        Owner.Address updatedAddress = OwnerTestFactory.HelenLeary.ADDRESS;
-        Owner.Telephone updatedTelephone = OwnerTestFactory.HelenLeary.TELEPHONE;
-        Owner.City updatedCity = OwnerTestFactory.HelenLeary.CITY;
+        Owner.Name renamedName = OwnerTestFactory.EduardoRodriquez.NAME;
+        Owner.Address updatedAddress = OwnerTestFactory.BettyDavis.ADDRESS;
+        Owner.Telephone updatedTelephone = OwnerTestFactory.BettyDavis.TELEPHONE;
+        Owner.City updatedCity = OwnerTestFactory.BettyDavis.CITY;
         OwnerCommand.Rehydrate command = new OwnerCommand.Rehydrate(
             given.id(),
             renamedName,
@@ -80,7 +80,7 @@ class OwnerRepositoryTest {
         Owner result = repository.update(new Owner(command));
 
         assertThat(result).isNotNull();
-        assertThat(result.id()).isEqualTo(OwnerTestFactory.JamesCarter.ID);
+        assertThat(result.id()).isEqualTo(OwnerTestFactory.GeorgeFranklin.ID);
         assertThat(result.name()).isEqualTo(renamedName);
         assertThat(result.address()).isEqualTo(updatedAddress);
         assertThat(result.telephone()).isEqualTo(updatedTelephone);
@@ -94,3 +94,4 @@ class OwnerRepositoryTest {
     }
 
 }
+

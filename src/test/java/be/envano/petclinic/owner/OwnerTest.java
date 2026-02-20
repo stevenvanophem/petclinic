@@ -10,7 +10,7 @@ class OwnerTest {
     @Test
     @DisplayName("An owner first name can't be blank")
     void testFirstNameBlank() {
-        assertThatThrownBy(() -> Owner.Name.fromStrings(" ", OwnerTestFactory.JamesCarter.LAST_NAME))
+        assertThatThrownBy(() -> Owner.Name.fromStrings(" ", OwnerTestFactory.GeorgeFranklin.LAST_NAME))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Owner first name cannot be blank.");
     }
@@ -18,7 +18,7 @@ class OwnerTest {
     @Test
     @DisplayName("An owner last name can't be blank")
     void testLastNameBlank() {
-        assertThatThrownBy(() -> Owner.Name.fromStrings(OwnerTestFactory.JamesCarter.FIRST_NAME, " "))
+        assertThatThrownBy(() -> Owner.Name.fromStrings(OwnerTestFactory.GeorgeFranklin.FIRST_NAME, " "))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessageContaining("Owner last name cannot be blank.");
     }
@@ -32,3 +32,4 @@ class OwnerTest {
     }
 
 }
+
